@@ -7,21 +7,29 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [Header("移动设置")]
-    [SerializeField] private float moveSpeed = 5f; // 移动速度
+    [SerializeField] private float moveSpeed = 5f;         // 移动速度
     [SerializeField] private bool isReverseControl = false; // 反向控制状态
     
     [Header("跳跃设置")]
-    [SerializeField] private float jumpForce = 7f; // 跳跃力
-    [SerializeField] private int maxJumps = 1; // 最大跳跃次数
-    [SerializeField] private float jumpCooldown = 0.2f; // 跳跃冷却时间
+    [SerializeField] private float jumpForce = 7f;          // 跳跃力
+    [SerializeField] private int maxJumps = 1;              // 最大跳跃次数
+    [SerializeField] private float jumpCooldown = 0.2f;     // 跳跃冷却时间
+    
     [Header("物理设置")]
-    [SerializeField] private float gravityScale = 2f; // 重力比例，初始值设为2
+    [SerializeField] private float gravityScale = 2f;       // 重力比例
     
     [Header("地面检测")]
-    [SerializeField] private Transform groundCheck; // 地面检测点
+    [SerializeField] private Transform groundCheck;         // 地面检测点
     [SerializeField] private float groundCheckRadius = 0.02f; // 检测半径
-    [SerializeField] private LayerMask groundLayer; // 地面图层
+    [SerializeField] private LayerMask groundLayer;         // 地面图层
     [SerializeField] private string groundLayerName = "Ground"; // 地面图层名称
+    
+    // 墙体检测相关变量
+    [Header("墙体检测设置")]
+    [SerializeField] private float wallCheckDistance = 0.26f; // 墙体检测距离
+    [SerializeField] private LayerMask wallLayer;           // 墙体图层
+    [SerializeField] private string wallLayerName = "Ground"; // 墙体图层名称
+    [SerializeField] private float wallCheckHeightOffset = 0.3f; // 墙体检测线高度偏移
     
     // 组件引用
     private Rigidbody2D rb; 
@@ -33,7 +41,9 @@ public class PlayerController : MonoBehaviour
     private bool isJumping = false; 
     private int currentJumps = 0; 
     private float lastJumpTime = -Mathf.Infinity; 
-    private float moveDirection = 0f; 
+    private float moveDirection = 0f;
+    private bool isTouchingWall = false; // 是否接触墙体
+    private float wallDirection = 0f;    // 墙体方向（-1:左, 1:右） 
 
     private void Awake()
     {
@@ -47,6 +57,7 @@ public class PlayerController : MonoBehaviour
             rb.constraints = RigidbodyConstraints2D.FreezeRotation;
         }
         
+        // 创建默认地面检测点
         if (!groundCheck)
         {
             groundCheck = new GameObject("GroundCheck").transform;
@@ -54,8 +65,9 @@ public class PlayerController : MonoBehaviour
             groundCheck.localPosition = new Vector3(0f, -0.5f, 0f);
         }
         
-        // 在Awake中初始化LayerMask，避免序列化问题
+        // 初始化LayerMask
         groundLayer = LayerMask.GetMask(groundLayerName);
+        wallLayer = LayerMask.GetMask(wallLayerName);
     }
 
     private void OnEnable()
@@ -93,15 +105,10 @@ public class PlayerController : MonoBehaviour
     /// <summary>处理跳跃事件</summary>
     private void OnPlayerJump(object data)
     {
-        // 在反向跳跃模式下，只有按S键（Vertical轴负方向）才能跳跃
         if (isReverseControl)
-        {
-            if (Input.GetKeyDown(KeyCode.S)) Jump();
-        }
+            { if (Input.GetKeyDown(KeyCode.S)) Jump(); }
         else
-        {
-            if (Input.GetKeyDown(KeyCode.W)) Jump();
-        }
+            { if (Input.GetKeyDown(KeyCode.W)) Jump(); }
     }
 
     /// <summary>处理反转控制切换事件</summary>
@@ -125,7 +132,7 @@ public class PlayerController : MonoBehaviour
     private bool CanJump()
     {
         if (currentJumps < 0) currentJumps = 0;
-        return Time.time >= lastJumpTime + jumpCooldown && currentJumps < maxJumps;
+        return isGrounded && Time.time >= lastJumpTime + jumpCooldown && currentJumps < maxJumps;
     }
 
     /// <summary>执行跳跃动作</summary>
@@ -141,10 +148,53 @@ public class PlayerController : MonoBehaviour
         rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
     }
 
+
+
     /// <summary>应用移动力</summary>
     private void ApplyMovement()
     {
-        rb.velocity = new Vector2(moveDirection * moveSpeed, rb.velocity.y);
+        // 检测是否接触墙体
+        CheckWall();
+        
+        // 处理墙体碰撞逻辑
+        float targetHorizontalSpeed = moveDirection * moveSpeed;
+        
+        // 在空中接触墙体时，防止向墙体方向移动
+        if (!isGrounded && isTouchingWall && Mathf.Sign(moveDirection) == wallDirection)
+            targetHorizontalSpeed = 0f;
+        
+        rb.velocity = new Vector2(targetHorizontalSpeed, rb.velocity.y);
+    }
+    
+    /// <summary>检测是否接触墙体</summary>
+    private void CheckWall()
+    {
+        // 定义多个检测点，覆盖角色不同高度位置
+        Vector2 leftCheckPosCenter = transform.position;
+        Vector2 rightCheckPosCenter = transform.position;
+        Vector2 leftCheckPosTop = new Vector2(transform.position.x, transform.position.y + wallCheckHeightOffset);
+        Vector2 rightCheckPosTop = new Vector2(transform.position.x, transform.position.y + wallCheckHeightOffset);
+        Vector2 leftCheckPosBottom = new Vector2(transform.position.x, transform.position.y - wallCheckHeightOffset);
+        Vector2 rightCheckPosBottom = new Vector2(transform.position.x, transform.position.y - wallCheckHeightOffset);
+        
+        // 发射多条射线检测墙体
+        RaycastHit2D leftHitCenter = Physics2D.Raycast(leftCheckPosCenter, Vector2.left, wallCheckDistance, wallLayer);
+        RaycastHit2D rightHitCenter = Physics2D.Raycast(rightCheckPosCenter, Vector2.right, wallCheckDistance, wallLayer);
+        RaycastHit2D leftHitTop = Physics2D.Raycast(leftCheckPosTop, Vector2.left, wallCheckDistance, wallLayer);
+        RaycastHit2D rightHitTop = Physics2D.Raycast(rightCheckPosTop, Vector2.right, wallCheckDistance, wallLayer);
+        RaycastHit2D leftHitBottom = Physics2D.Raycast(leftCheckPosBottom, Vector2.left, wallCheckDistance, wallLayer);
+        RaycastHit2D rightHitBottom = Physics2D.Raycast(rightCheckPosBottom, Vector2.right, wallCheckDistance, wallLayer);
+        
+        // 检测是否接触墙体
+        isTouchingWall = leftHitCenter || rightHitCenter || leftHitTop || rightHitTop || leftHitBottom || rightHitBottom;
+        
+        // 更新墙体方向
+        if (leftHitCenter || leftHitTop || leftHitBottom)
+            wallDirection = -1f; // 左侧墙体
+        else if (rightHitCenter || rightHitTop || rightHitBottom)
+            wallDirection = 1f; // 右侧墙体
+        else
+            wallDirection = 0f; // 无墙体
     }
 
     /// <summary>切换反向控制状态</summary>
@@ -160,13 +210,33 @@ public class PlayerController : MonoBehaviour
     public bool IsReverseControlEnabled() => isReverseControl;
     public void SetReverseControl(bool isReverse) => isReverseControl = isReverse;
 
-    /// <summary>在编辑器中绘制地面检测范围的gizmo</summary>
+    /// <summary>在编辑器中绘制调试gizmo</summary>
     private void OnDrawGizmosSelected()
     {
+        // 绘制地面检测范围
         if (groundCheck)
         {
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
         }
+        
+        // 绘制墙体检测射线
+        Vector2 leftCheckPosCenter = transform.position;
+        Vector2 rightCheckPosCenter = transform.position;
+        Vector2 leftCheckPosTop = new Vector2(transform.position.x, transform.position.y + wallCheckHeightOffset);
+        Vector2 rightCheckPosTop = new Vector2(transform.position.x, transform.position.y + wallCheckHeightOffset);
+        Vector2 leftCheckPosBottom = new Vector2(transform.position.x, transform.position.y - wallCheckHeightOffset);
+        Vector2 rightCheckPosBottom = new Vector2(transform.position.x, transform.position.y - wallCheckHeightOffset);
+        
+        Gizmos.color = isTouchingWall ? Color.red : Color.blue;
+        // 绘制中心检测线
+        Gizmos.DrawLine(leftCheckPosCenter, leftCheckPosCenter + Vector2.left * wallCheckDistance);
+        Gizmos.DrawLine(rightCheckPosCenter, rightCheckPosCenter + Vector2.right * wallCheckDistance);
+        // 绘制顶部检测线
+        Gizmos.DrawLine(leftCheckPosTop, leftCheckPosTop + Vector2.left * wallCheckDistance);
+        Gizmos.DrawLine(rightCheckPosTop, rightCheckPosTop + Vector2.right * wallCheckDistance);
+        // 绘制底部检测线
+        Gizmos.DrawLine(leftCheckPosBottom, leftCheckPosBottom + Vector2.left * wallCheckDistance);
+        Gizmos.DrawLine(rightCheckPosBottom, rightCheckPosBottom + Vector2.right * wallCheckDistance);
     }
 }
