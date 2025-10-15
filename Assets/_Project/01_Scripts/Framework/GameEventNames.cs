@@ -8,4 +8,10 @@ public static class GameEventNames
     public const string PLAYER_MOVE = "PlayerMove";
     public const string PLAYER_JUMP = "PlayerJump";
     public const string PLAYER_TOGGLE_REVERSE_CONTROL = "PlayerToggleReverseControl";
+    // 关卡相关事件
+    public const string Into_Next_Level = "IntoNextLevel";
+    // 淡入淡出相关事件
+    public const string FADE_IN_START = "FadeInStart";
+    public const string FADE_OUT_START = "FadeOutStart";
+    public const string FADE_OUT_COMPLETE = "FadeOutComplete"; // 淡出完成事件
 }

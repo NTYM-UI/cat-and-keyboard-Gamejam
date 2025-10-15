@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     
     [Header("地面检测")]
     [SerializeField] private Transform groundCheck;         // 地面检测点
-    [SerializeField] private float groundCheckRadius = 0.02f; // 检测半径
+    [SerializeField] private float groundCheckRadius = 0.2f; // 检测半径
     [SerializeField] private LayerMask groundLayer;         // 地面图层
     [SerializeField] private string groundLayerName = "Ground"; // 地面图层名称
     
@@ -47,6 +47,9 @@ public class PlayerController : MonoBehaviour
 
     private void Awake()
     {
+        // 初始化玩家标签为"Player"
+        gameObject.tag = "Player";
+
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
         
@@ -79,9 +82,11 @@ public class PlayerController : MonoBehaviour
 
     private void OnDisable()
     {
+
         EventManager.Instance.Unsubscribe(GameEventNames.PLAYER_MOVE, OnPlayerMove);
         EventManager.Instance.Unsubscribe(GameEventNames.PLAYER_JUMP, OnPlayerJump);
         EventManager.Instance.Unsubscribe(GameEventNames.PLAYER_TOGGLE_REVERSE_CONTROL, OnToggleReverseControl);
+
     }
 
     private void Update()
@@ -159,9 +164,15 @@ public class PlayerController : MonoBehaviour
         // 处理墙体碰撞逻辑
         float targetHorizontalSpeed = moveDirection * moveSpeed;
         
-        // 在空中接触墙体时，防止向墙体方向移动
-        if (!isGrounded && isTouchingWall && Mathf.Sign(moveDirection) == wallDirection)
-            targetHorizontalSpeed = 0f;
+        // 接触墙体时直接将对应方向的速度设置为零
+        if (isTouchingWall)
+        {
+            // 如果正在向墙体方向移动或处于墙体方向上，将速度设为零
+            if (Mathf.Abs(wallDirection) > 0f && (Mathf.Sign(moveDirection) == wallDirection || moveDirection == 0f))
+            {
+                targetHorizontalSpeed = 0f;
+            }
+        }
         
         rb.velocity = new Vector2(targetHorizontalSpeed, rb.velocity.y);
     }
