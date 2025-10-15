@@ -9,16 +9,16 @@ public class SaveManager : MonoBehaviour
     {
         if (instance == null)
         {
-            instance = this; // ³õÊ¼»¯instance
-            DontDestroyOnLoad(gameObject); // ÇĞ»»³¡¾°Ê±²»Ïú»Ù
+            instance = this; // åˆå§‹åŒ–instance
+            DontDestroyOnLoad(gameObject); // åˆ‡æ¢åœºæ™¯æ—¶ä¸é”€æ¯
         }
         else
         {
-            Destroy(gameObject); // Ïú»ÙÖØ¸´µÄÊµÀı
+            Destroy(gameObject); // é”€æ¯é‡å¤çš„å®ä¾‹
         }
     }
 
-    //´æµµ
+    //å­˜æ¡£
     public void SaveGame(Vector2 playerPos,int level)
     {
         SaveData saveData = new SaveData();
@@ -32,18 +32,18 @@ public class SaveManager : MonoBehaviour
         PlayerPrefs.Save();
     }
 
-    //¶Áµµ
+    //è¯»æ¡£
     public SaveData LoadGame()
     {
         SaveData saveData = new SaveData();
-        //µÚ¶ş¸ö´«²ÎÊÇÄ¬ÈÏÖµ£¨±ÜÃâ¿Õ´æµµ£©
+        //ç¬¬äºŒä¸ªä¼ å‚æ˜¯é»˜è®¤å€¼ï¼ˆé¿å…ç©ºå­˜æ¡£ï¼‰
         saveData.playerPosX = PlayerPrefs.GetFloat("PlayerPosX", 0f);
         saveData.playerPosY = PlayerPrefs.GetFloat("PlayerPosY", 0f);
         saveData.currentLevel = PlayerPrefs.GetInt("CurrentLevel", 1);
         return saveData;
     }
 
-    //É¾µµ£¨ÖØ¿ª£©
+    //åˆ æ¡£ï¼ˆé‡å¼€ï¼‰
     public void DeleteSave()
     {
         PlayerPrefs.DeleteAll();

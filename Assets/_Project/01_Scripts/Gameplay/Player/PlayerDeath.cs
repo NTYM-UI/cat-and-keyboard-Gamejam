@@ -17,7 +17,10 @@ public class PlayerDeath : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Trap"))
         {
-            PlayerRespawn.playerRespawn.Respawn();
+            // 发布玩家死亡事件
+            EventManager.Instance.Publish(GameEventNames.PLAYER_DEATH);
+            // 发布玩家复活事件
+            EventManager.Instance.Publish(GameEventNames.PLAYER_RESPAWN);
         }
     }
 }

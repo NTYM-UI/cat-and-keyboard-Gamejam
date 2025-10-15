@@ -7,7 +7,7 @@ namespace Player.Respawn
 {
     public class PlayerRespawn : MonoBehaviour
     {
-        public static PlayerRespawn playerRespawn=new PlayerRespawn();
+        public static PlayerRespawn playerRespawn;
         Rigidbody2D rb;
         public int level=1;
 
@@ -15,23 +15,34 @@ namespace Player.Respawn
         {
             if (playerRespawn == null)
             {
-                playerRespawn = this; // ³õÊ¼»¯playerRespawn
-                DontDestroyOnLoad(gameObject); // ÇĞ»»³¡¾°Ê±²»Ïú»Ù
+                playerRespawn = this; // åˆå§‹åŒ–playerRespawn
+                DontDestroyOnLoad(gameObject); // åˆ‡æ¢åœºæ™¯æ—¶ä¸é”€æ¯
             }
             else
             {
-                Destroy(gameObject); // Ïú»ÙÖØ¸´µÄÊµÀı
+                Destroy(gameObject); // é”€æ¯é‡å¤çš„å®ä¾‹
             }
+        }
+
+        private void OnEnable()
+        {
+            EventManager.Instance.Subscribe(GameEventNames.PLAYER_RESPAWN, Respawn);
+        }
+
+        private void OnDisable()
+        {
+            EventManager.Instance.Unsubscribe(GameEventNames.PLAYER_RESPAWN, Respawn);
         }
 
         // Start is called before the first frame update
         void Start()
         {
             rb = GetComponent<Rigidbody2D>();
+            // åˆå§‹æ—¶åŠ è½½å­˜æ¡£
             SaveManager.instance.SaveGame(gameObject.transform.position, level);
         }
 
-        public void Respawn()
+        public void Respawn(object data)
         {
             SaveData saveData = SaveManager.instance.LoadGame();
             rb.position = new Vector2(saveData.playerPosX, saveData.playerPosY);
