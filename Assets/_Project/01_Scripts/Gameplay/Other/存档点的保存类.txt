@@ -1,8 +1,0 @@
-1.需创建一个SaveManager对象挂上同名脚本和Restart脚本（这个是测试游戏结束或者重开后重置存档点）
-2.角色方面挂上PlayerRespawn和PlayerDeath脚本
-3.要创建存档点空游戏对象并且挂上SavePoint脚本·
-以上是脚本方面
-
-1.角色的Tag要是Player
-2.陷阱的Tag要是Trap
-3.存档点和陷阱的碰撞体Collider都需要勾上Is Trigger
