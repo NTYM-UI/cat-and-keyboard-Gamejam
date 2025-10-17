@@ -689,7 +689,7 @@ MonoBehaviour:
   jumpCooldown: 0.2
   gravityScale: 2
   groundCheck: {fileID: 0}
-  groundCheckRadius: 0.02
+  groundCheckRadius: 0.2
   groundLayer:
     serializedVersion: 2
     m_Bits: 0
@@ -911,8 +911,8 @@ SceneRoots:
   m_Roots:
   - {fileID: 519420032}
   - {fileID: 1790621526}
+  - {fileID: 200226870}
   - {fileID: 700315180}
   - {fileID: 1479598106}
   - {fileID: 537772748}
   - {fileID: 422016764}
-  - {fileID: 200226870}
