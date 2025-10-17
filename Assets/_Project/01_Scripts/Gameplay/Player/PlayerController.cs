@@ -159,8 +159,8 @@ public class PlayerController : MonoBehaviour
         // 处理墙体碰撞逻辑
         float targetHorizontalSpeed = moveDirection * moveSpeed;
         
-        // 在空中接触墙体时，防止向墙体方向移动
-        if (!isGrounded && isTouchingWall && Mathf.Sign(moveDirection) == wallDirection)
+        // 当接触墙体时，防止向墙体方向移动（移除!isGrounded限制）
+        if (isTouchingWall && Mathf.Sign(moveDirection) == wallDirection)
             targetHorizontalSpeed = 0f;
         
         rb.velocity = new Vector2(targetHorizontalSpeed, rb.velocity.y);
