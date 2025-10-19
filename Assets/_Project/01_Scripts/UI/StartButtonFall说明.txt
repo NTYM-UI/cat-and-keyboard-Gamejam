@@ -1,0 +1,11 @@
+1. 准备按钮与组件
+在Canvas下创建一个Button（命名为“StartButton”），设置好文字、位置
+给Button添加2个组件：
+Rigidbody2D：“Body Type = Kinematic”，勾选“Freeze Rotation Z”（看你们要不要勾选，想不想要一个旋转的效果）
+BoxCollider2D：给按钮添加碰撞体并且调整大小
+
+2.将该脚本挂在StartButton上
+
+3.绑定点击事件
+选中StartButton，在Button组件中，点击OnClick()右下方的+号
+将StartButton对象拖到Object输入框中，然后在右侧下拉菜单选择StartButtonFall，然后选择OnStartButtonClick
