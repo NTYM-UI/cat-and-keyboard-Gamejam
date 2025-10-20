@@ -10,7 +10,7 @@ public class SaveManager : MonoBehaviour
         if (instance == null)
         {
             instance = this; // 初始化instance
-            DontDestroyOnLoad(gameObject); // 切换场景时不销毁
+            //DontDestroyOnLoad(gameObject); // 切换场景时不销毁
         }
         else
         {
