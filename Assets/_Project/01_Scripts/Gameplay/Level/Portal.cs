@@ -41,7 +41,6 @@ public class Portal : MonoBehaviour
         {
             // 淡出完成后加载场景
             SceneManager.Instance.LoadScene(targetSceneName);
-            
             // 重置传送状态
             ResetTeleportState();
         }

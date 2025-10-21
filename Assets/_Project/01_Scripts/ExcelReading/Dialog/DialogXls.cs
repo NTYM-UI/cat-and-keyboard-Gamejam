@@ -15,7 +15,7 @@ namespace XlsWork.Dialogs
 
             dialogDict = new Dictionary<int, DialogItem>();
 
-            string path = Application.dataPath + "/_Project/Excel/Dialog.xlsx"; //指定表格的文件路径。在编辑器模式下，Application.dataPath就是Assets文件夹
+            string path = Application.streamingAssetsPath + "/Excel/Dialog.xlsx"; //指定表格的文件路径。在编辑器模式下，Application.dataPath就是Assets文件夹
 
             FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite);
 

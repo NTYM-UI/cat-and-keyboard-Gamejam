@@ -20,7 +20,7 @@ public class PlayerController : MonoBehaviour
     
     [Header("地面检测")]
     [SerializeField] private Transform groundCheck;         // 地面检测点
-    [SerializeField] private float groundCheckRadius = 0.02f; // 检测半径
+    [SerializeField] private float groundCheckRadius = 0.2f; // 检测半径
     [SerializeField] private LayerMask groundLayer;         // 地面图层
     [SerializeField] private string groundLayerName = "Ground"; // 地面图层名称
     
@@ -33,8 +33,8 @@ public class PlayerController : MonoBehaviour
     
     // 组件引用
     private Rigidbody2D rb; 
-    private SpriteRenderer spriteRenderer; 
-    
+    private SpriteRenderer spriteRenderer;
+
     // 状态变量
     private bool isGrounded = false; 
     private bool wasGrounded = false; 
@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
-        
+
         // 设置重力比例和冻结Z轴旋转
         if (rb != null)
         {
@@ -98,17 +98,26 @@ public class PlayerController : MonoBehaviour
         if (data is float horizontalInput)
         {
             moveDirection = isReverseControl ? -horizontalInput : horizontalInput;
-            if (moveDirection != 0) spriteRenderer.flipX = moveDirection < 0;
+            if (moveDirection != 0)
+            {
+                spriteRenderer.flipX = moveDirection < 0;
+            }
         }
     }
 
     /// <summary>处理跳跃事件</summary>
     private void OnPlayerJump(object data)
     {
-        if (isReverseControl)
-            { if (Input.GetKeyDown(KeyCode.S)) Jump(); }
-        else
-            { if (Input.GetKeyDown(KeyCode.W)) Jump(); }
+        // 直接执行跳跃，因为事件已经由PlayerInputManager过滤了有效的跳跃输入
+        // 包括W/S键和上下方向键
+        if (isReverseControl && (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))) 
+        {
+            Jump();
+        }
+        else if (!isReverseControl && (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)))
+        {
+            Jump();
+        }
     }
 
     /// <summary>处理反转控制切换事件</summary>
