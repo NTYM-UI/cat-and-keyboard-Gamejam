@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour
     
     [Header("跳跃设置")]
     [SerializeField] private float jumpForce = 7f;          // 跳跃力
-    [SerializeField] private int maxJumps = 1;              // 最大跳跃次数
+    [SerializeField] private int maxJumps = 2;              // 最大跳跃次数
     [SerializeField] private float jumpCooldown = 0.2f;     // 跳跃冷却时间
     
     [Header("物理设置")]
