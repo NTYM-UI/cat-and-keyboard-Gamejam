@@ -30,6 +30,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask wallLayer;           // 墙体图层
     [SerializeField] private string wallLayerName = "Ground"; // 墙体图层名称
     [SerializeField] private float wallCheckHeightOffset = 0.3f; // 墙体检测线高度偏移
+    [SerializeField] private Vector2 customWallCheckTopPosition; // 自定义顶部检测点位置
+    [SerializeField] private Vector2 customWallCheckMiddlePosition; // 自定义中部检测点位置
+    [SerializeField] private Vector2 customWallCheckBottomPosition; // 自定义底部检测点位置
+    [SerializeField] private bool useCustomWallCheckPositions = false; // 是否使用自定义检测点位置
     
     // 组件引用
     private Rigidbody2D rb; 
@@ -178,13 +182,30 @@ public class PlayerController : MonoBehaviour
     /// <summary>检测是否接触墙体</summary>
     private void CheckWall()
     {
-        // 定义多个检测点，覆盖角色不同高度位置
-        Vector2 leftCheckPosCenter = transform.position;
-        Vector2 rightCheckPosCenter = transform.position;
-        Vector2 leftCheckPosTop = new Vector2(transform.position.x, transform.position.y + wallCheckHeightOffset);
-        Vector2 rightCheckPosTop = new Vector2(transform.position.x, transform.position.y + wallCheckHeightOffset);
-        Vector2 leftCheckPosBottom = new Vector2(transform.position.x, transform.position.y - wallCheckHeightOffset);
-        Vector2 rightCheckPosBottom = new Vector2(transform.position.x, transform.position.y - wallCheckHeightOffset);
+        Vector2 leftCheckPosCenter, rightCheckPosCenter;
+        Vector2 leftCheckPosTop, rightCheckPosTop;
+        Vector2 leftCheckPosBottom, rightCheckPosBottom;
+        
+        if (useCustomWallCheckPositions)
+        {
+            // 使用自定义检测点位置
+            leftCheckPosTop = transform.TransformPoint(customWallCheckTopPosition);
+            rightCheckPosTop = transform.TransformPoint(customWallCheckTopPosition);
+            leftCheckPosCenter = transform.TransformPoint(customWallCheckMiddlePosition);
+            rightCheckPosCenter = transform.TransformPoint(customWallCheckMiddlePosition);
+            leftCheckPosBottom = transform.TransformPoint(customWallCheckBottomPosition);
+            rightCheckPosBottom = transform.TransformPoint(customWallCheckBottomPosition);
+        }
+        else
+        {
+            // 使用传统的基于高度偏移的检测点位置
+            leftCheckPosCenter = transform.position;
+            rightCheckPosCenter = transform.position;
+            leftCheckPosTop = new Vector2(transform.position.x, transform.position.y + wallCheckHeightOffset);
+            rightCheckPosTop = new Vector2(transform.position.x, transform.position.y + wallCheckHeightOffset);
+            leftCheckPosBottom = new Vector2(transform.position.x, transform.position.y - wallCheckHeightOffset);
+            rightCheckPosBottom = new Vector2(transform.position.x, transform.position.y - wallCheckHeightOffset);
+        }
         
         // 发射多条射线检测墙体
         RaycastHit2D leftHitCenter = Physics2D.Raycast(leftCheckPosCenter, Vector2.left, wallCheckDistance, wallLayer);
@@ -204,6 +225,28 @@ public class PlayerController : MonoBehaviour
             wallDirection = 1f; // 右侧墙体
         else
             wallDirection = 0f; // 无墙体
+    }
+    
+    /// <summary>设置是否使用自定义墙体检测位置</summary>
+    public void SetUseCustomWallCheckPositions(bool useCustom)
+    {
+        useCustomWallCheckPositions = useCustom;
+    }
+    
+    /// <summary>设置自定义墙体检测点位置（局部坐标系）</summary>
+    public void SetCustomWallCheckPositions(Vector2 top, Vector2 middle, Vector2 bottom)
+    {
+        customWallCheckTopPosition = top;
+        customWallCheckMiddlePosition = middle;
+        customWallCheckBottomPosition = bottom;
+        useCustomWallCheckPositions = true;
+    }
+    
+    /// <summary>设置墙体检测高度偏移</summary>
+    public void SetWallCheckHeightOffset(float offset)
+    {
+        wallCheckHeightOffset = offset;
+        useCustomWallCheckPositions = false; // 重置为使用高度偏移模式
     }
 
     /// <summary>切换反向控制状态</summary>
@@ -230,12 +273,30 @@ public class PlayerController : MonoBehaviour
         }
         
         // 绘制墙体检测射线
-        Vector2 leftCheckPosCenter = transform.position;
-        Vector2 rightCheckPosCenter = transform.position;
-        Vector2 leftCheckPosTop = new Vector2(transform.position.x, transform.position.y + wallCheckHeightOffset);
-        Vector2 rightCheckPosTop = new Vector2(transform.position.x, transform.position.y + wallCheckHeightOffset);
-        Vector2 leftCheckPosBottom = new Vector2(transform.position.x, transform.position.y - wallCheckHeightOffset);
-        Vector2 rightCheckPosBottom = new Vector2(transform.position.x, transform.position.y - wallCheckHeightOffset);
+        Vector2 leftCheckPosCenter, rightCheckPosCenter;
+        Vector2 leftCheckPosTop, rightCheckPosTop;
+        Vector2 leftCheckPosBottom, rightCheckPosBottom;
+        
+        if (useCustomWallCheckPositions)
+        {
+            // 使用自定义检测点位置
+            leftCheckPosTop = transform.TransformPoint(customWallCheckTopPosition);
+            rightCheckPosTop = transform.TransformPoint(customWallCheckTopPosition);
+            leftCheckPosCenter = transform.TransformPoint(customWallCheckMiddlePosition);
+            rightCheckPosCenter = transform.TransformPoint(customWallCheckMiddlePosition);
+            leftCheckPosBottom = transform.TransformPoint(customWallCheckBottomPosition);
+            rightCheckPosBottom = transform.TransformPoint(customWallCheckBottomPosition);
+        }
+        else
+        {
+            // 使用传统的基于高度偏移的检测点位置
+            leftCheckPosCenter = transform.position;
+            rightCheckPosCenter = transform.position;
+            leftCheckPosTop = new Vector2(transform.position.x, transform.position.y + wallCheckHeightOffset);
+            rightCheckPosTop = new Vector2(transform.position.x, transform.position.y + wallCheckHeightOffset);
+            leftCheckPosBottom = new Vector2(transform.position.x, transform.position.y - wallCheckHeightOffset);
+            rightCheckPosBottom = new Vector2(transform.position.x, transform.position.y - wallCheckHeightOffset);
+        }
         
         Gizmos.color = isTouchingWall ? Color.red : Color.blue;
         // 绘制中心检测线
@@ -247,5 +308,14 @@ public class PlayerController : MonoBehaviour
         // 绘制底部检测线
         Gizmos.DrawLine(leftCheckPosBottom, leftCheckPosBottom + Vector2.left * wallCheckDistance);
         Gizmos.DrawLine(rightCheckPosBottom, rightCheckPosBottom + Vector2.right * wallCheckDistance);
+        
+        // 绘制检测点
+        Gizmos.color = Color.green;
+        Gizmos.DrawSphere(leftCheckPosCenter, 0.05f);
+        Gizmos.DrawSphere(rightCheckPosCenter, 0.05f);
+        Gizmos.DrawSphere(leftCheckPosTop, 0.05f);
+        Gizmos.DrawSphere(rightCheckPosTop, 0.05f);
+        Gizmos.DrawSphere(leftCheckPosBottom, 0.05f);
+        Gizmos.DrawSphere(rightCheckPosBottom, 0.05f);
     }
 }
