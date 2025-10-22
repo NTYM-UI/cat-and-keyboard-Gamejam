@@ -7,17 +7,19 @@ public class StartButtonFall : MonoBehaviour
 
     void Start()
     {
-        rb = GetComponent<Rigidbody2D>();
+        // è·å–è‡ªèº«æˆ–çˆ¶ç‰©ä½“ä¸Šçš„Rigidbody2D
+        rb = GetComponentInParent<Rigidbody2D>();
+        // åˆå§‹æ—¶å†»ç»“Yè½´
+        rb.constraints = RigidbodyConstraints2D.FreezePositionY;
     }
 
-    public void OnStartButtonClick()
+    // å½“é¼ æ ‡ç‚¹å‡»æ—¶è°ƒç”¨
+    private void OnMouseDown()
     {
-        rb.bodyType = RigidbodyType2D.Dynamic;
-        //¸ø°´Å¥ÉèÖÃÖØÁ¦²ÎÊı£¬Ê¹ÏÂÂä¸üÃ÷ÏÔ£¬ÊıÖµ¿Éµ÷
-        rb.gravityScale = 20;
-        //¸ø°´Å¥¼ÓÒ»µãÏòÏÂµÄÁ¦£¬ÈÃÏÂÂä¸üÃ÷ÏÔ,ÊıÖµ¿Éµ÷Õû
-        rb.AddForce(Vector2.down * 800f);
-        //½ûÓÃ°´Å¥µã»÷,·ÀÖ¹ÖØ¸´µã»÷
-        GetComponent<Button>().interactable = false;
+        if (rb != null)
+        {
+            // è§£é™¤Yè½´å†»ç»“
+            rb.constraints &= ~RigidbodyConstraints2D.FreezePositionY;
+        }
     }
 }
