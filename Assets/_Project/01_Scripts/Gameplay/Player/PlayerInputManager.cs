@@ -18,7 +18,7 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
     }
 
     /// <summary>
-    /// 处理移动输入，获取水平轴输入并发布PlayerMove事件
+    /// 处理移动输入，获取水平轴输入（包括A/D键和左右方向键）并发布PlayerMove事件
     /// </summary>
     private void HandleMoveInput()
     {
@@ -27,16 +27,19 @@ public class PlayerInputManager : Singleton<PlayerInputManager>
     }
 
     /// <summary>
-    /// 处理跳跃输入，检测Vertical轴输入（上方向键/W键或下方向键/S键）并发布PlayerJump事件
+    /// 处理跳跃输入，检测上/下键（W/S键和上下方向键）并发布PlayerJump事件
     /// </summary>
     private void HandleJumpInput()
     {
-        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.S)) // 检测上方向键/W键或下方向键/S键
+        // 检测W/S键和上下方向键
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.S) || 
+            Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.DownArrow))
         {
             jumpInput = true;
             EventManager.Instance.Publish(GameEventNames.PLAYER_JUMP, null);
         }
-        else if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S))
+        else if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S) ||
+                 Input.GetKeyUp(KeyCode.UpArrow) || Input.GetKeyUp(KeyCode.DownArrow))
         {
             jumpInput = false;
         }
