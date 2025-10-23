@@ -39,6 +39,7 @@ public class DialogInfo : MonoBehaviour
     private bool isTyping = false; // 是否正在打字
     private string fullText; // 完整的对话内容
     private Coroutine typewriterCoroutine; // 当前运行的打字机协程引用
+    private UnityEngine.UI.Button panelButton; // 对话面板按钮
 
     // 立绘相关
     public Transform leftCharacterParent; // 左侧立绘父物体
@@ -82,12 +83,16 @@ public class DialogInfo : MonoBehaviour
     {
         // 订阅对话开始事件
         EventManager.Instance.Subscribe(GameEventNames.DIALOG_START, OnDialogStartEvent);
+        // 订阅对话结束事件
+        EventManager.Instance.Subscribe(GameEventNames.DIALOG_END, OnDialogEndEvent);
     }
 
     private void OnDisable()
     {
         // 取消订阅对话开始事件
         EventManager.Instance.Unsubscribe(GameEventNames.DIALOG_START, OnDialogStartEvent);
+        // 取消订阅对话结束事件
+        EventManager.Instance.Unsubscribe(GameEventNames.DIALOG_END, OnDialogEndEvent);
     }
 
     // 处理对话开始事件
@@ -115,7 +120,7 @@ public class DialogInfo : MonoBehaviour
     public void StartDialog(int startId)
     {
         // 添加点击事件监听
-        var panelButton = dialogPanel.GetComponent<UnityEngine.UI.Button>();
+        panelButton = dialogPanel.GetComponent<UnityEngine.UI.Button>();
         if (panelButton == null)
             panelButton = dialogPanel.AddComponent<UnityEngine.UI.Button>();
         panelButton.onClick.AddListener(OnDialogPanelClick);
@@ -173,6 +178,16 @@ public class DialogInfo : MonoBehaviour
                 // 发布对话结束事件
                 EventManager.Instance.Publish(GameEventNames.DIALOG_END, currentDialogId);
                 break;
+        }
+    }
+
+    // 结束对话
+    private void OnDialogEndEvent(object eventData)
+    {
+        if (panelButton != null)
+        {
+            // 移除面板点击监听
+            panelButton.onClick.RemoveListener(OnDialogPanelClick);
         }
     }
 
