@@ -12,15 +12,15 @@ GameObject:
   - component: {fileID: 6684974044762255047}
   - component: {fileID: 5497691744934353590}
   - component: {fileID: 7474966469268952256}
-  - component: {fileID: 4984772808996529932}
   - component: {fileID: 1318392346622229397}
+  - component: {fileID: 4984772808996529932}
   - component: {fileID: 374915350086270775}
   - component: {fileID: 1344325554395634489}
   - component: {fileID: 3673642190305483919}
   m_Layer: 0
   m_HasEditorInfo: 1
   m_Name: "\u4E3B\u89D2"
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -168,6 +168,29 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!95 &1318392346622229397
+Animator:
+  serializedVersion: 6
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7829165189010818226}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: eed754258243ee743ad2844374098f40, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_UpdateFrequencyMode: 0
+  m_UpdateFrequency: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &4984772808996529932
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -202,29 +225,6 @@ MonoBehaviour:
   customWallCheckMiddlePosition: {x: 0, y: 1.59}
   customWallCheckBottomPosition: {x: 0, y: -0.63}
   useCustomWallCheckPositions: 1
---- !u!95 &1318392346622229397
-Animator:
-  serializedVersion: 6
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7829165189010818226}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: eed754258243ee743ad2844374098f40, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_UpdateFrequencyMode: 0
-  m_UpdateFrequency: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &374915350086270775
 MonoBehaviour:
   m_ObjectHideFlags: 0

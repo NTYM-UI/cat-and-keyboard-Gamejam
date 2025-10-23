@@ -6,8 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/_Project/03_Scenes/GameScene.scene
-    guid: 7a86b7a582c7c2c40a20bb8733e1ac48
+    path: Assets/_Project/03_Scenes/StartScene.scene
+    guid: 1528292774fa2cc4d95297c222d9a480
+  - enabled: 1
+    path: Assets/_Project/03_Scenes/LevelScenes/LevelScenes.scene
+    guid: 65f130597b5a59748a41dd3137d60697
   m_BuildProfiles: []
   m_configObjects: {}
   m_SlimFeaturesWeixinMiniGame:

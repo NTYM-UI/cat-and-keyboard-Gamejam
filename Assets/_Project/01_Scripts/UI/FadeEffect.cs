@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 public class FadeEffect : MonoBehaviour
 {
     [Header("淡入淡出设置")]
-    public float fadeDuration = 1.0f;
+    public float fadeDuration = 1.5f;
     public CanvasGroup fadeCanvasGroup;
     public GameObject fadeImage; // 引用淡入淡出图片对象
 

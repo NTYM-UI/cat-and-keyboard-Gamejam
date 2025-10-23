@@ -169,7 +169,7 @@ public class DialogInfo : MonoBehaviour
 
             case "END": // 对话结束
                 dialogPanel.SetActive(false);
-                Debug.Log("对话结束");
+                Debug.Log("对话结束ID为" + currentDialogId);
                 // 发布对话结束事件
                 EventManager.Instance.Publish(GameEventNames.DIALOG_END, currentDialogId);
                 break;
