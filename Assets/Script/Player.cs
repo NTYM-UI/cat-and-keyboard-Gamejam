@@ -1,24 +1,55 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class PlayerBasic : MonoBehaviour
+public class Player : MonoBehaviour
 {
+    private Rigidbody2D rb;
+    private WindowScale windowScale;
+    public static Player instance;
+
     [Header("移动")]
     public float moveSpeed = 6f;
 
     [Header("跳跃")]
     public float jumpHeightMul = 1f;
-    public float rayLength = 0.55f;   // 射线长度（比角色半身略长即可）
+    public float rayLength = 0.55f; // 射线长度（用于检测地面）
     public LayerMask groundLayer;
 
-    float jumpVel;
-    float g => Physics2D.gravity.magnitude;
+    [Header("面积")]
+    public float area;
+    public float lerpSpeed; 
 
-    Rigidbody2D rb;
-    float horizontal;
-    bool isGrounded;
+    private float jumpVel;
+    private float g => Physics2D.gravity.magnitude;
 
-    void Awake() => rb = GetComponent<Rigidbody2D>();
+    private float horizontal;
+    private bool isGrounded;
+
+
+    void Awake()
+    {
+        if (instance != null)
+            Destroy(instance.gameObject);
+        else
+            instance = this;
+
+        rb = GetComponent<Rigidbody2D>();
+        windowScale = FindObjectOfType<WindowScale>();
+
+        if (windowScale != null)
+        {
+            windowScale.OnScaleChanged += OnWindowScaleChanged;
+        }
+    }
+
+    void OnDestroy()
+    {
+        if (windowScale != null)
+        {
+            windowScale.OnScaleChanged -= OnWindowScaleChanged;
+        }
+    }
 
     void Update()
     {
@@ -37,8 +68,7 @@ public class PlayerBasic : MonoBehaviour
         // 水平移动
         rb.velocity = new Vector2(horizontal * moveSpeed, rb.velocity.y);
 
-        // 地面检测从脚底向下射线
-        // 计算当前脚底位置（中心 - 半身高）
+        // 地面检测（脚底射线）
         float halfHeight = GetComponent<CapsuleCollider2D>().size.y * transform.lossyScale.y * 0.5f;
         Vector3 start = transform.position - Vector3.up * halfHeight;
 
@@ -58,7 +88,17 @@ public class PlayerBasic : MonoBehaviour
 
         float halfHeight = GetComponent<CapsuleCollider2D>().size.y * transform.lossyScale.y * 0.5f;
         Vector3 start = transform.position - Vector3.up * halfHeight;
-        
+
         Gizmos.DrawLine(start, start + Vector3.down * rayLength);
     }
+
+    #region event
+
+    private void OnWindowScaleChanged(Vector3 newScale)
+    {
+        transform.localScale = Vector3.Lerp(transform.localScale, newScale, lerpSpeed * Time.deltaTime);
+        area = newScale.x * newScale.y;
+    }
+
+    #endregion
 }
