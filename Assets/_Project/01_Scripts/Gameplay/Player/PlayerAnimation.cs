@@ -9,6 +9,7 @@ public class PlayerAnimation : MonoBehaviour
     private SpriteRenderer spriteRenderer;
     private bool isGrounded;
     private bool wasGrounded;
+    private bool isDialogActive = false; // 对话是否激活
     
     // 空中跳跃和掉落的精灵图片
     public Sprite jumpingSprite;
@@ -27,6 +28,36 @@ public class PlayerAnimation : MonoBehaviour
         {
             originalGroundSprite = spriteRenderer.sprite;
         }
+    }
+    
+    /// <summary>
+    /// 处理对话开始事件
+    /// </summary>
+    private void OnDialogStart(object data)
+    {
+        isDialogActive = true;
+    }
+    
+    /// <summary>
+    /// 处理对话结束事件
+    /// </summary>
+    private void OnDialogEnd(object data)
+    {
+        isDialogActive = false;
+    }
+    
+    private void OnEnable()
+    {
+        // 订阅对话相关事件
+        EventManager.Instance.Subscribe(GameEventNames.DIALOG_START, OnDialogStart);
+        EventManager.Instance.Subscribe(GameEventNames.DIALOG_END, OnDialogEnd);
+    }
+    
+    private void OnDisable()
+    {
+        // 取消订阅对话相关事件
+        EventManager.Instance.Unsubscribe(GameEventNames.DIALOG_START, OnDialogStart);
+        EventManager.Instance.Unsubscribe(GameEventNames.DIALOG_END, OnDialogEnd);
     }
 
     void Update()
@@ -51,8 +82,14 @@ public class PlayerAnimation : MonoBehaviour
         }
 
         // 检测A/D键或左右方向键持续按下
-        if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || 
-             Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow)) && isGrounded)
+        // 如果对话正在进行，强制设置为不移动
+        if (isDialogActive)
+        {
+            animator.SetBool("isMoving", false);
+            animator.SetBool("isStopping", true);
+        }
+        else if ((Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D) || 
+                 Input.GetKey(KeyCode.LeftArrow) || Input.GetKey(KeyCode.RightArrow)) && isGrounded)
         {
             animator.SetBool("isMoving", true);
             animator.SetBool("isStopping", false);

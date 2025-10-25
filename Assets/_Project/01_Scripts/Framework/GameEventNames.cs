@@ -24,6 +24,7 @@ public static class GameEventNames
     
     // 对话相关事件
     public const string DIALOG_START = "DialogStart"; // 开始对话事件
+    public const string ON_DIALOG = "OnDialog";
     public const string DIALOG_END = "DialogEnd"; // 对话结束事件
     public const string DIALOG_TYPE_SOUND = "DialogTypeSound"; // 打字音效事件
     
@@ -31,4 +32,9 @@ public static class GameEventNames
     
     // 相机相关事件
     public const string CAMERA_SHAKE = "CameraShake"; // 相机震动事件
+    public const string CAMERA_SHAKE_HELPER = "CameraShakeHelper"; // 相机震动事件
+    
+    // 平台相关事件
+    public const string PLATFORM_BREAK = "PlatformBreak"; // 平台断裂事件
+
 }

@@ -158,7 +158,8 @@ public class DialogInfo : MonoBehaviour
                 speakerText.text = current.character;
                 fullText = current.content; // 保存完整文本
                 contentText.text = ""; // 清空当前显示
-                
+                EventManager.Instance.Publish(GameEventNames.ON_DIALOG, currentDialogId);
+
                 // 开始打字机效果
                 if (typewriterCoroutine != null)
                     StopCoroutine(typewriterCoroutine);

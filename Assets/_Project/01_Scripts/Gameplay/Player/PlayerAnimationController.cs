@@ -13,6 +13,7 @@ public class PlayerAnimationController : MonoBehaviour
     
     private Animator animator; // 动画控制器引用
     private bool isCurrentlyMoving = false; // 当前是否正在移动
+    private bool isDialogActive = false; // 对话是否激活
     
     private void Awake()
     {
@@ -24,12 +25,18 @@ public class PlayerAnimationController : MonoBehaviour
     {
         // 订阅玩家移动事件
         EventManager.Instance.Subscribe(GameEventNames.PLAYER_MOVE, OnPlayerMove);
+        // 订阅对话相关事件
+        EventManager.Instance.Subscribe(GameEventNames.DIALOG_START, OnDialogStart);
+        EventManager.Instance.Subscribe(GameEventNames.DIALOG_END, OnDialogEnd);
     }
     
     private void OnDisable()
     {
         // 取消订阅玩家移动事件
         EventManager.Instance.Unsubscribe(GameEventNames.PLAYER_MOVE, OnPlayerMove);
+        // 取消订阅对话相关事件
+        EventManager.Instance.Unsubscribe(GameEventNames.DIALOG_START, OnDialogStart);
+        EventManager.Instance.Unsubscribe(GameEventNames.DIALOG_END, OnDialogEnd);
     }
     
     /// <summary>
@@ -39,6 +46,17 @@ public class PlayerAnimationController : MonoBehaviour
     {
         if (data is float horizontalInput && animator != null)
         {
+            // 如果对话正在进行，强制设置为不移动
+            if (isDialogActive)
+            {
+                if (isCurrentlyMoving)
+                {
+                    isCurrentlyMoving = false;
+                    animator.SetBool(moveParameterName, false);
+                }
+                return;
+            }
+            
             // 判断是否正在移动
             bool shouldBeMoving = horizontalInput != 0;
             
@@ -90,5 +108,27 @@ public class PlayerAnimationController : MonoBehaviour
         {
             animator.SetBool(moveParameterName, isMoving);
         }
+    }
+    
+    /// <summary>
+    /// 处理对话开始事件
+    /// </summary>
+    private void OnDialogStart(object data)
+    {
+        isDialogActive = true;
+        // 对话开始时强制停止移动动画
+        if (isCurrentlyMoving && animator != null)
+        {
+            isCurrentlyMoving = false;
+            animator.SetBool(moveParameterName, false);
+        }
+    }
+    
+    /// <summary>
+    /// 处理对话结束事件
+    /// </summary>
+    private void OnDialogEnd(object data)
+    {
+        isDialogActive = false;
     }
 }

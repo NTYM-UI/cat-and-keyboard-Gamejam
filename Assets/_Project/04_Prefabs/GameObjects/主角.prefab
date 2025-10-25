@@ -128,7 +128,7 @@ BoxCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.0375942, y: 1.7424002}
+  m_Offset: {x: 0.1772553, y: 1.734983}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0.5, y: 0.14}
@@ -139,7 +139,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 3.0251882, y: 4.84}
+  m_Size: {x: 1.4770887, y: 4.8548346}
   m_EdgeRadius: 0
 --- !u!50 &7474966469268952256
 Rigidbody2D:
@@ -205,17 +205,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   isReverseControl: 0
-  jumpForce: 12
+  jumpForce: 20
   maxJumps: 1
   jumpCooldown: 0.2
-  gravityScale: 2
+  gravityScale: 5
   groundCheck: {fileID: 0}
-  groundCheckRadius: 0.4
+  groundCheckRadius: 0.43
   groundLayer:
     serializedVersion: 2
     m_Bits: 0
   groundLayerName: Ground
-  wallCheckDistance: 0.58
+  wallCheckDistance: 0.49
   wallLayer:
     serializedVersion: 2
     m_Bits: 0
@@ -223,7 +223,7 @@ MonoBehaviour:
   wallCheckHeightOffset: 0.18
   customWallCheckTopPosition: {x: 0, y: 4.12}
   customWallCheckMiddlePosition: {x: 0, y: 1.59}
-  customWallCheckBottomPosition: {x: 0, y: -0.63}
+  customWallCheckBottomPosition: {x: 0, y: -0.32}
   useCustomWallCheckPositions: 1
 --- !u!114 &374915350086270775
 MonoBehaviour:

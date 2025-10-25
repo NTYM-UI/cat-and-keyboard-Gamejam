@@ -16,7 +16,7 @@ namespace Player.Respawn
             if (playerRespawn == null)
             {
                 playerRespawn = this; // 初始化playerRespawn
-                DontDestroyOnLoad(gameObject); // 切换场景时不销毁
+                // DontDestroyOnLoad(gameObject); // 切换场景时不销毁
             }
             else
             {

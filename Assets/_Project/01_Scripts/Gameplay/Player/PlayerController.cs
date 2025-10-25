@@ -48,6 +48,7 @@ public class PlayerController : MonoBehaviour
     private float moveDirection = 0f;
     private bool isTouchingWall = false; // 是否接触墙体
     private float wallDirection = 0f;    // 墙体方向（-1:左, 1:右） 
+    private bool isDialogActive = false; // 对话是否激活
 
     private void Awake()
     {
@@ -79,6 +80,8 @@ public class PlayerController : MonoBehaviour
         EventManager.Instance.Subscribe(GameEventNames.PLAYER_MOVE, OnPlayerMove);
         EventManager.Instance.Subscribe(GameEventNames.PLAYER_JUMP, OnPlayerJump);
         EventManager.Instance.Subscribe(GameEventNames.PLAYER_TOGGLE_REVERSE_CONTROL, OnToggleReverseControl);
+        EventManager.Instance.Subscribe(GameEventNames.DIALOG_START, OnDialogStart);
+        EventManager.Instance.Subscribe(GameEventNames.DIALOG_END, OnDialogEnd);
     }
 
     private void OnDisable()
@@ -86,6 +89,8 @@ public class PlayerController : MonoBehaviour
         EventManager.Instance.Unsubscribe(GameEventNames.PLAYER_MOVE, OnPlayerMove);
         EventManager.Instance.Unsubscribe(GameEventNames.PLAYER_JUMP, OnPlayerJump);
         EventManager.Instance.Unsubscribe(GameEventNames.PLAYER_TOGGLE_REVERSE_CONTROL, OnToggleReverseControl);
+        EventManager.Instance.Unsubscribe(GameEventNames.DIALOG_START, OnDialogStart);
+        EventManager.Instance.Unsubscribe(GameEventNames.DIALOG_END, OnDialogEnd);
     }
 
     private void Update()
@@ -99,6 +104,9 @@ public class PlayerController : MonoBehaviour
     /// <summary>处理玩家移动输入事件</summary>
     private void OnPlayerMove(object data)
     {
+        // 如果对话正在进行，不处理移动输入
+        if (isDialogActive) return;
+        
         if (data is float horizontalInput)
         {
             moveDirection = isReverseControl ? -horizontalInput : horizontalInput;
@@ -112,6 +120,9 @@ public class PlayerController : MonoBehaviour
     /// <summary>处理跳跃事件</summary>
     private void OnPlayerJump(object data)
     {
+        // 如果对话正在进行，不处理跳跃输入
+        if (isDialogActive) return;
+        
         // 直接执行跳跃，因为事件已经由PlayerInputManager过滤了有效的跳跃输入
         // 包括W/S键和上下方向键
         if (isReverseControl && (Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow))) 
@@ -170,13 +181,27 @@ public class PlayerController : MonoBehaviour
         CheckWall();
         
         // 处理墙体碰撞逻辑
-        float targetHorizontalSpeed = moveDirection * moveSpeed;
+        float targetHorizontalSpeed = isDialogActive ? 0f : (moveDirection * moveSpeed);
         
         // 当接触墙体时，防止向墙体方向移动（移除!isGrounded限制）
         if (isTouchingWall && Mathf.Sign(moveDirection) == wallDirection)
             targetHorizontalSpeed = 0f;
         
         rb.velocity = new Vector2(targetHorizontalSpeed, rb.velocity.y);
+    }
+    
+    /// <summary>处理对话开始事件</summary>
+    private void OnDialogStart(object data)
+    {
+        isDialogActive = true;
+        // 重置移动方向，确保玩家立即停止移动
+        moveDirection = 0f;
+    }
+    
+    /// <summary>处理对话结束事件</summary>
+    private void OnDialogEnd(object data)
+    {
+        isDialogActive = false;
     }
     
     /// <summary>检测是否接触墙体</summary>

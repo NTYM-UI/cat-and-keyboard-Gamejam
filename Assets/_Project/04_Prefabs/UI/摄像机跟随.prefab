@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 7422543637783931454}
   - component: {fileID: 8636431846977861399}
   - component: {fileID: 4316911866936028833}
+  - component: {fileID: 7248061859422550689}
   m_Layer: 0
   m_HasEditorInfo: 1
   m_Name: Main Camera
@@ -130,6 +131,20 @@ MonoBehaviour:
   m_CameraActivatedEvent:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &7248061859422550689
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3396873502879991460}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f94143440d40ee949a9ee4386363d1f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultShakeDuration: 0.3
+  defaultShakeMagnitude: 0.1
 --- !u!1 &3616604910316572319
 GameObject:
   m_ObjectHideFlags: 0
@@ -422,9 +437,32 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 12.400491, y: 5.563915}
-      - {x: -5.403656, y: 5.4740324}
-      - {x: -5.470619, y: -5.7889557}
-      - {x: 1.0366637, y: -5.8371}
-      - {x: 12.353885, y: -5.6691394}
+    - - {x: 124.73638, y: -69.21563}
+      - {x: 124.981895, y: -67.02445}
+      - {x: 120.019585, y: -47.894466}
+      - {x: 120.16118, y: -43.630154}
+      - {x: 120.096695, y: -32.38776}
+      - {x: 100.82741, y: -32.24077}
+      - {x: 99.31766, y: 23.41478}
+      - {x: 17.087898, y: 23.407824}
+      - {x: 7.47503, y: 23.37954}
+      - {x: 7.321171, y: 9.123018}
+      - {x: -17.514606, y: 9.28422}
+      - {x: -17.120012, y: -4.334836}
+      - {x: 5.1792045, y: -5.740155}
+      - {x: 5.3830853, y: -5.7255077}
+      - {x: 8.879561, y: -6.207142}
+      - {x: 11.512308, y: -6.1624355}
+      - {x: 30.654457, y: -6.096183}
+      - {x: 38.095543, y: 0.9874072}
+      - {x: 42.331955, y: 3.957669}
+      - {x: 46.88045, y: 6.0904007}
+      - {x: 51.730736, y: 7.5317316}
+      - {x: 55.05549, y: 7.937604}
+      - {x: 59.329536, y: 8.0792}
+      - {x: 79.48383, y: 8.077397}
+      - {x: 80.6709, y: -43.528355}
+      - {x: 101.267075, y: -43.717693}
+      - {x: 101.19463, y: -76.7995}
+      - {x: 124.89472, y: -76.49831}
   m_UseDelaunayMesh: 0
