@@ -5319,7 +5319,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 9013432878780053360, guid: c8c580e0c5da7864685d8e17b1b0296b, type: 3}
       propertyPath: StartID
-      value: 31
+      value: 30
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -8911,11 +8911,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 5648781652558344236, guid: ee16767a6ba90a4439f93fd67606467d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 105
+      value: -17.25
       objectReference: {fileID: 0}
     - target: {fileID: 5648781652558344236, guid: ee16767a6ba90a4439f93fd67606467d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -69.1
+      value: -2.48
       objectReference: {fileID: 0}
     - target: {fileID: 5648781652558344236, guid: ee16767a6ba90a4439f93fd67606467d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10042,11 +10042,11 @@ PrefabInstance:
       objectReference: {fileID: 1926943783}
     - target: {fileID: 7011161704538458626, guid: f533b626bf2af8a48b60901c23cf32cb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 105
+      value: -17.25
       objectReference: {fileID: 0}
     - target: {fileID: 7011161704538458626, guid: f533b626bf2af8a48b60901c23cf32cb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -66.74361
+      value: -0.12360811
       objectReference: {fileID: 0}
     - target: {fileID: 7011161704538458626, guid: f533b626bf2af8a48b60901c23cf32cb, type: 3}
       propertyPath: m_LocalPosition.z
@@ -10106,11 +10106,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7585385710804945101, guid: f533b626bf2af8a48b60901c23cf32cb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 105
+      value: -11.19272
       objectReference: {fileID: 0}
     - target: {fileID: 7585385710804945101, guid: f533b626bf2af8a48b60901c23cf32cb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -66.74361
+      value: 0.231843
       objectReference: {fileID: 0}
     - target: {fileID: 7585385710804945101, guid: f533b626bf2af8a48b60901c23cf32cb, type: 3}
       propertyPath: m_LocalPosition.z
@@ -14633,7 +14633,7 @@ PolygonCollider2D:
       - {x: 60.543446, y: 6.25}
       - {x: 74.68, y: 6.25}
       - {x: 74.68, y: -43.94464}
-      - {x: 98.75215, y: -75.2}
+      - {x: 74.68, y: -75.2}
       - {x: 123.65, y: -75.2}
   m_UseDelaunayMesh: 0
 --- !u!4 &7191226248426192676

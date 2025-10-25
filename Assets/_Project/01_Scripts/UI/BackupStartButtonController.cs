@@ -6,7 +6,6 @@ using UnityEngine;
 /// </summary>
 public class BackupStartButtonController : MonoBehaviour
 {
-    [SerializeField]
     private GameObject backupStartButton; // 备用开始按钮对象引用
 
     void Start()
