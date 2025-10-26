@@ -36,5 +36,8 @@ public static class GameEventNames
     
     // 平台相关事件
     public const string PLATFORM_BREAK = "PlatformBreak"; // 平台断裂事件
+    
+    // 隐藏路相关事件
+    public const string HIDDEN_PATH_ACTIVATED = "HiddenPathActivated"; // 隐藏路激活事件
 
 }

@@ -538,7 +538,7 @@ MonoBehaviour:
   selectionIcon: {fileID: 934904214}
   horizontalSpacing: 20
   verticalOffset: 0
-  hideOnStart: 1
+  hideOnStart: 0
 --- !u!1 &302098599
 GameObject:
   m_ObjectHideFlags: 0
@@ -1043,7 +1043,7 @@ MonoBehaviour:
   selectionIcon: {fileID: 934904214}
   horizontalSpacing: 20
   verticalOffset: 0
-  hideOnStart: 1
+  hideOnStart: 0
 --- !u!1 &1159963945
 GameObject:
   m_ObjectHideFlags: 0
@@ -1447,7 +1447,7 @@ MonoBehaviour:
   selectionIcon: {fileID: 934904214}
   horizontalSpacing: 20
   verticalOffset: 0
-  hideOnStart: 1
+  hideOnStart: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

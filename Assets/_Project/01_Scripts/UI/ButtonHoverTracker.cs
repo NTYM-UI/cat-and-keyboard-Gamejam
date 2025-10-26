@@ -18,7 +18,7 @@ public class ButtonHoverTracker : MonoBehaviour, IPointerEnterHandler, IPointerE
     public float verticalOffset = 0f;
     
     [Tooltip("是否在游戏开始时隐藏图标")]
-    public bool hideOnStart = true;
+    public bool hideOnStart = false;
     
     private RectTransform buttonRect;
     private static ButtonHoverTracker currentHoveredButton;
@@ -72,9 +72,14 @@ public class ButtonHoverTracker : MonoBehaviour, IPointerEnterHandler, IPointerE
         if (currentHoveredButton == this && selectionIcon != null)
         {
             // 隐藏图标
-            selectionIcon.gameObject.SetActive(false);
+            // selectionIcon.gameObject.SetActive(false);
             currentHoveredButton = null;
         }
+    }
+
+    public void OnMouseDown()
+    {
+        selectionIcon.gameObject.SetActive(false);
     }
 
     /// <summary>
