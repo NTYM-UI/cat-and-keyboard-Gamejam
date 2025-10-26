@@ -3,8 +3,9 @@ using System.Collections;
 
 /// <summary>
 /// 隐藏路按钮控制器 - 玩家踩上按钮时显示隐藏路
+/// 增加了面积检测功能：只有当玩家面积大于按钮目标面积时才能触发
 /// </summary>
-public class HiddenPathButton : MonoBehaviour
+public class HiddenPathButton : MonoBehaviour 
 {
     [Header("隐藏路设置")]
     public GameObject hiddenPath;           // 要显示的隐藏路对象
@@ -17,6 +18,10 @@ public class HiddenPathButton : MonoBehaviour
     [Range(0.1f, 2f)]
     public float fadeInDuration = 0.5f;         // 淡入持续时间
     public bool triggerOnce = true;             // 是否只触发一次
+    
+    [Header("面积检测设置")]
+    [SerializeField] private float playerArea;  // 玩家当前面积
+    public float buttonTargetArea = 1f;         // 按钮目标面积（玩家面积需要大于此值才能触发）
     
     [Header("视觉反馈")]
     public bool triggerCameraShake = false;     // 是否触发相机震动
@@ -58,18 +63,63 @@ public class HiddenPathButton : MonoBehaviour
         }
     }
     
+    private void OnEnable()
+    {
+        // 订阅窗口缩放变化事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.Subscribe(GameEventNames.WINDOW_SCALE_CHANGED, OnWindowScaleChanged);
+        }
+    }
+    
+    private void OnDisable()
+    {
+        // 取消订阅事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.Unsubscribe(GameEventNames.WINDOW_SCALE_CHANGED, OnWindowScaleChanged);
+        }
+    }
+    
+    // 移除Start方法，因为不再需要保存默认颜色
+    // 可以根据需要添加其他初始化逻辑
+    
     private void OnCollisionEnter2D(Collision2D collision)
     {
         // 玩家踩踏时的处理
         if (collision.gameObject.CompareTag("Player") && !isPressed)
         {
-            // 显示按钮按下效果
-            PressButton();
-            
-            // 首次激活或非一次性触发时显示隐藏路
-            if (!isActivated || !triggerOnce)
+            // 检查玩家面积条件
+            if (CheckAreaCondition())
             {
-                ActivateHiddenPath();
+                // 显示按钮按下效果
+                PressButton();
+                
+                // 首次激活或非一次性触发时显示隐藏路
+                if (!isActivated || !triggerOnce)
+                {
+                    ActivateHiddenPath();
+                }
+            }
+        }
+    }
+    
+    private void OnCollisionStay2D(Collision2D collision)
+    {
+        // 玩家持续踩踏时，检查面积变化
+        if (collision.gameObject.CompareTag("Player") && !isPressed)
+        {
+            // 检查玩家面积条件
+            if (CheckAreaCondition())
+            {
+                // 显示按钮按下效果
+                PressButton();
+                
+                // 首次激活或非一次性触发时显示隐藏路
+                if (!isActivated || !triggerOnce)
+                {
+                    ActivateHiddenPath();
+                }
             }
         }
     }
@@ -191,6 +241,28 @@ public class HiddenPathButton : MonoBehaviour
                 StopCoroutine(releaseButtonCoroutine);
             }
             releaseButtonCoroutine = StartCoroutine(ReleaseButtonAfterDelay());
+        }
+    }
+    
+    /// <summary>
+    /// 检查玩家面积是否满足触发条件
+    /// </summary>
+    /// <returns>如果玩家面积大于目标面积则返回true</returns>
+    private bool CheckAreaCondition()
+    {
+        return playerArea > buttonTargetArea;
+    }
+    
+    /// <summary>
+    /// 处理窗口缩放变化事件
+    /// </summary>
+    /// <param name="data">包含新缩放比例的object数据</param>
+    private void OnWindowScaleChanged(object data)
+    {
+        // 将object类型参数转换为Vector3
+        if (data is Vector3 newScale)
+        {
+            playerArea = newScale.x * newScale.y;
         }
     }
     

@@ -5,15 +5,8 @@ using Player.Respawn;
 
 public class PlayerDeath : MonoBehaviour
 {
-    Rigidbody2D rb;
-    PlayerRespawn rp;
     private int playerDeathCount = 0;
     public int level = 0;
-    // Start is called before the first frame update
-    void Start()
-    {
-        rb = GetComponent<Rigidbody2D>();
-    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

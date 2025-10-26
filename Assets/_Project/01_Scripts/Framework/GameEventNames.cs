@@ -40,4 +40,6 @@ public static class GameEventNames
     // 隐藏路相关事件
     public const string HIDDEN_PATH_ACTIVATED = "HiddenPathActivated"; // 隐藏路激活事件
 
+    // 窗口缩放相关事件
+    public const string WINDOW_SCALE_CHANGED = "WindowScaleChanged"; // 窗口缩放变化事件
 }

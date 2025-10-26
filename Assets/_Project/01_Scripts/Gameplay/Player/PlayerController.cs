@@ -48,7 +48,7 @@ public class PlayerController : MonoBehaviour
     private float moveDirection = 0f;
     private bool isTouchingWall = false; // 是否接触墙体
     private float wallDirection = 0f;    // 墙体方向（-1:左, 1:右） 
-    private bool isDialogActive = false; // 对话是否激活
+    private bool isDialogActive = false; // 对话是否激活 
 
     private void Awake()
     {

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 631991018661124422}
   - component: {fileID: 4167105227720712149}
   - component: {fileID: 8490204214863967893}
-  - component: {fileID: 321347745460864702}
+  - component: {fileID: 935128380803364595}
   m_Layer: 0
   m_HasEditorInfo: 1
   m_Name: "\u6309\u94AE"
@@ -136,7 +136,7 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
---- !u!114 &321347745460864702
+--- !u!114 &935128380803364595
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -151,11 +151,12 @@ MonoBehaviour:
   hiddenPath: {fileID: 0}
   useActivationAnimation: 1
   buttonPressDistance: 0.2
-  buttonReleaseDelay: 0.5
+  buttonReleaseDelay: 0.2
   useFadeInEffect: 1
   fadeInDuration: 0.5
   triggerOnce: 1
-  activatedColor: {r: 0.5, g: 0.8, b: 0.5, a: 1}
+  playerArea: 0
+  buttonTargetArea: 1.4
   triggerCameraShake: 1
   shakeDuration: 0.2
   shakeMagnitude: 0.1
