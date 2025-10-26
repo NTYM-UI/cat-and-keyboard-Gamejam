@@ -22,14 +22,14 @@ public static class GameEventNames
     public const string FADE_OUT_START = "FadeOutStart"; // 淡出开始事件
     public const string FADE_OUT_COMPLETE = "FadeOutComplete"; // 淡出完成事件
     
-    // 对话相关事件
+    // 对话相关事件（会传出对应对话ID）
     public const string DIALOG_START = "DialogStart"; // 开始对话事件
-    public const string ON_DIALOG = "OnDialog";
+    public const string ON_DIALOG = "OnDialog"; // 对话进行中事件
     public const string DIALOG_END = "DialogEnd"; // 对话结束事件
     public const string DIALOG_TYPE_SOUND = "DialogTypeSound"; // 打字音效事件
     
     // UI相关事件
-    
+
     // 相机相关事件
     public const string CAMERA_SHAKE = "CameraShake"; // 相机震动事件
     public const string CAMERA_SHAKE_HELPER = "CameraShakeHelper"; // 相机震动事件

@@ -678,6 +678,10 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: 4.21
       objectReference: {fileID: 0}
+    - target: {fileID: 1713728003022211393, guid: 1d7ae9e520ef50d49a6ad80e4c452ed7, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 2.88
+      objectReference: {fileID: 0}
     - target: {fileID: 2472978986435680225, guid: 1d7ae9e520ef50d49a6ad80e4c452ed7, type: 3}
       propertyPath: m_SizeDelta.x
       value: 44.35
@@ -685,6 +689,10 @@ PrefabInstance:
     - target: {fileID: 2472978986435680225, guid: 1d7ae9e520ef50d49a6ad80e4c452ed7, type: 3}
       propertyPath: m_AnchoredPosition.x
       value: 422.68
+      objectReference: {fileID: 0}
+    - target: {fileID: 2789288519768987974, guid: 1d7ae9e520ef50d49a6ad80e4c452ed7, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4291019715
       objectReference: {fileID: 0}
     - target: {fileID: 6032931447999466989, guid: 1d7ae9e520ef50d49a6ad80e4c452ed7, type: 3}
       propertyPath: m_LocalPosition.x
@@ -745,6 +753,10 @@ PrefabInstance:
     - target: {fileID: 8449528143042884312, guid: 1d7ae9e520ef50d49a6ad80e4c452ed7, type: 3}
       propertyPath: m_IsActive
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8563560365425090531, guid: 1d7ae9e520ef50d49a6ad80e4c452ed7, type: 3}
+      propertyPath: m_fontColor32.rgba
+      value: 4291019715
       objectReference: {fileID: 0}
     - target: {fileID: 8570410467567724607, guid: 1d7ae9e520ef50d49a6ad80e4c452ed7, type: 3}
       propertyPath: m_IsActive
@@ -1013,7 +1025,7 @@ Rigidbody2D:
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 1
-  m_Mass: 1.8952391
+  m_Mass: 1.8960099
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
