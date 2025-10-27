@@ -156,7 +156,9 @@ MonoBehaviour:
   fadeInDuration: 0.5
   triggerOnce: 1
   playerArea: 0
-  buttonTargetArea: 1.4
+  buttonTargetArea: 2
+  showAreaDisplay: 1
+  areaDisplayText: {fileID: 0}
   triggerCameraShake: 1
   shakeDuration: 0.2
   shakeMagnitude: 0.1

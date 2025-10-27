@@ -35,6 +35,8 @@ public class ExitGameOnDialogEnd : MonoBehaviour
             PlayerPrefs.SetString("SavedLevel", currentLevel);
             Debug.Log($"游戏进度已保存到关卡：{currentLevel}");
 
+            //变为窗口模式
+            EventManager.Instance.Publish(GameEventNames.SET_GAME_WINDOW_SIZE, true);
             // 退出游戏
             #if UNITY_EDITOR
             // 在编辑器中运行时，停止播放模式

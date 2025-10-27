@@ -42,4 +42,5 @@ public static class GameEventNames
 
     // 窗口缩放相关事件
     public const string WINDOW_SCALE_CHANGED = "WindowScaleChanged"; // 窗口缩放变化事件
+    public const string SET_GAME_WINDOW_SIZE = "SetGameWindowSize"; // 设置游戏窗口大小事件
 }

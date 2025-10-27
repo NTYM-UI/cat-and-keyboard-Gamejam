@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Collections;
+using TMPro;
 
 /// <summary>
 /// 隐藏路按钮控制器 - 玩家踩上按钮时显示隐藏路
@@ -22,6 +23,10 @@ public class HiddenPathButton : MonoBehaviour
     [Header("面积检测设置")]
     [SerializeField] private float playerArea;  // 玩家当前面积
     public float buttonTargetArea = 1f;         // 按钮目标面积（玩家面积需要大于此值才能触发）
+    
+    [Header("面积显示设置")]
+    public bool showAreaDisplay = true;         // 是否显示面积信息
+    public TextMeshProUGUI areaDisplayText;     // 显示面积的文本组件
     
     [Header("视觉反馈")]
     public bool triggerCameraShake = false;     // 是否触发相机震动
@@ -61,6 +66,16 @@ public class HiddenPathButton : MonoBehaviour
                 }
             }
         }
+        
+        //// 初始化面积显示
+        //if (showAreaDisplay && areaDisplayText == null)
+        //{
+        //    Debug.LogWarning("面积显示已启用，但未指定TextMeshProUGUI组件！");
+        //}
+        //else if (showAreaDisplay && areaDisplayText != null)
+        //{
+        //    UpdateAreaDisplay();
+        //}
     }
     
     private void OnEnable()
@@ -72,7 +87,7 @@ public class HiddenPathButton : MonoBehaviour
         }
     }
     
-    private void OnDisable()
+    private void OnDisable() 
     {
         // 取消订阅事件
         if (EventManager.Instance != null)
@@ -80,9 +95,6 @@ public class HiddenPathButton : MonoBehaviour
             EventManager.Instance.Unsubscribe(GameEventNames.WINDOW_SCALE_CHANGED, OnWindowScaleChanged);
         }
     }
-    
-    // 移除Start方法，因为不再需要保存默认颜色
-    // 可以根据需要添加其他初始化逻辑
     
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -257,13 +269,32 @@ public class HiddenPathButton : MonoBehaviour
     /// 处理窗口缩放变化事件
     /// </summary>
     /// <param name="data">包含新缩放比例的object数据</param>
+    private void Update()
+    {
+        // 实时更新面积显示
+        UpdateAreaDisplay();
+    }
+    
     private void OnWindowScaleChanged(object data)
     {
         // 将object类型参数转换为Vector3
         if (data is Vector3 newScale)
         {
             playerArea = newScale.x * newScale.y;
+            // 面积变化时立即更新显示
+            UpdateAreaDisplay();
         }
+    }
+    
+    /// <summary>
+    /// 更新面积显示文本
+    /// </summary>
+    private void UpdateAreaDisplay()
+    {
+        if (!showAreaDisplay || areaDisplayText == null) return;
+        
+        // 更新文本内容
+        areaDisplayText.text = $"玩家面积: {playerArea:F2}\n目标面积: {buttonTargetArea:F2}";
     }
     
     /// <summary>

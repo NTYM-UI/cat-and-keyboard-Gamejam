@@ -5,7 +5,7 @@ public class JumpLevel : MonoBehaviour
     void Awake()
     {
         // 从PlayerPrefs中获取保存的关卡
-        string savedLevel = PlayerPrefs.GetString("SavedLevel", "StartScene");
+        string savedLevel = PlayerPrefs.GetString("SavedLevel");
 
         // 验证是否有保存的关卡信息
         if (!string.IsNullOrEmpty(savedLevel))
@@ -17,6 +17,7 @@ public class JumpLevel : MonoBehaviour
         else
         {
             Debug.Log("没有找到保存的关卡信息");
+            EventManager.Instance.Publish(GameEventNames.SET_GAME_WINDOW_SIZE, false);
         }
     }
 }

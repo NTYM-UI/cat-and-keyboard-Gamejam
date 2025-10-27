@@ -5,10 +5,13 @@ public class PlayerScaling : MonoBehaviour
 {
     [Header("缩放设置")]
     [Tooltip("缩放平滑过渡速度")]
-    public float lerpSpeed = 5f;
+    public float lerpSpeed = 8f; // 提高速度以适应更大的缩放范围
     
     [Tooltip("缩放完成阈值 - 当与目标缩放差异小于此值时视为完成")]
     public float scaleCompleteThreshold = 0.01f;
+    
+    [Tooltip("最大缩放限制倍数")]
+    public float maxScaleLimit = 10f; // 与WindowScale中的最大值保持一致
     
     private Vector3 initialScale; // 存储角色初始缩放大小作为基准
     private Vector3 windowScaleFactor = Vector3.one; // 窗口缩放因子
@@ -95,15 +98,30 @@ public class PlayerScaling : MonoBehaviour
         // 使用Vector3.Scale进行分量相乘
         Vector3 targetScale = Vector3.Scale(initialScale, windowScaleFactor);
         
-        // 持续执行Lerp，确保能完成缩放过渡
-        if (Vector3.Distance(transform.localScale, targetScale) > scaleCompleteThreshold)
+        // 对目标缩放应用限制，确保缩放不会过大或过小
+        Vector3 initialScaleWithLimit = new Vector3(
+            Mathf.Clamp(targetScale.x, initialScale.x * 0.1f, initialScale.x * maxScaleLimit),
+            Mathf.Clamp(targetScale.y, initialScale.y * 0.1f, initialScale.y * maxScaleLimit),
+            Mathf.Clamp(targetScale.z, initialScale.z * 0.1f, initialScale.z * maxScaleLimit)
+        );
+        
+        // 动态调整Lerp速度，根据缩放差值自适应
+        float dynamicLerpSpeed = lerpSpeed;
+        float scaleDifference = Vector3.Distance(transform.localScale, initialScaleWithLimit);
+        if (scaleDifference > 2f) // 当缩放差异较大时，加快速度
         {
-            transform.localScale = Vector3.Lerp(transform.localScale, targetScale, lerpSpeed * Time.deltaTime);
+            dynamicLerpSpeed *= 1.5f;
         }
-        else if (Vector3.Distance(transform.localScale, targetScale) > 0f)
+        
+        // 持续执行Lerp，确保能完成缩放过渡
+        if (scaleDifference > scaleCompleteThreshold)
+        {
+            transform.localScale = Vector3.Lerp(transform.localScale, initialScaleWithLimit, dynamicLerpSpeed * Time.deltaTime);
+        }
+        else if (scaleDifference > 0f)
         {
             // 当接近目标缩放时，直接设置为目标值，避免抖动
-            transform.localScale = targetScale;
+            transform.localScale = initialScaleWithLimit;
         }
         
         // 同步更新检测参数以匹配角色缩放
@@ -158,16 +176,25 @@ public class PlayerScaling : MonoBehaviour
         // 将object类型参数转换为Vector3
         if (data is Vector3 newScaleFactor)
         {
+            // 对每个分量应用缩放限制，防止过大的缩放值
+            Vector3 clampedScaleFactor = new Vector3(
+                Mathf.Clamp(newScaleFactor.x, 0.1f, maxScaleLimit),
+                Mathf.Clamp(newScaleFactor.y, 0.1f, maxScaleLimit),
+                Mathf.Clamp(newScaleFactor.z, 0.1f, maxScaleLimit)
+            );
+            
+            Debug.Log($"应用缩放因子 - 原始: {newScaleFactor}, 限制后: {clampedScaleFactor}");
+            
             if (isDialogActive)
             {
                 // 对话期间，只存储待处理的缩放因子
-                pendingScaleFactor = newScaleFactor;
+                pendingScaleFactor = clampedScaleFactor;
             }
             else
             {
                 // 非对话期间，直接更新窗口缩放因子
-                windowScaleFactor = newScaleFactor;
-                pendingScaleFactor = newScaleFactor; // 同时更新待处理因子
+                windowScaleFactor = clampedScaleFactor;
+                pendingScaleFactor = clampedScaleFactor; // 同时更新待处理因子
             }
         }
     }
