@@ -8,6 +8,8 @@ public class ExitGameOnDialogEnd : MonoBehaviour
     [Tooltip("当对话ID等于此值时退出游戏")]
     public int targetDialogId = 69;
 
+    private string currentLevel = "LevelScenes3_1"; // 第三关场景名称
+
     private void OnEnable()
     {
         // 订阅对话结束事件
@@ -28,6 +30,11 @@ public class ExitGameOnDialogEnd : MonoBehaviour
     {
         // 检查是否是目标对话ID
         if ((int)eventData == targetDialogId)
+        {
+            // 存储第三关
+            PlayerPrefs.SetString("SavedLevel", currentLevel);
+            Debug.Log($"游戏进度已保存到关卡：{currentLevel}");
+
             // 退出游戏
             #if UNITY_EDITOR
             // 在编辑器中运行时，停止播放模式
@@ -36,5 +43,6 @@ public class ExitGameOnDialogEnd : MonoBehaviour
             // 在实际构建中退出游戏
             Application.Quit();
             #endif
+        }
     }
 }

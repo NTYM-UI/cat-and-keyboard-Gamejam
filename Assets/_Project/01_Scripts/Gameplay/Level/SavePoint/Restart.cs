@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Restart : MonoBehaviour
 {
-    private void OnApplicationQuit()
-    {
-        SaveManager.instance.DeleteSave();
-    }
+    //private void OnApplicationQuit()
+    //{
+    //    SaveManager.instance.DeleteSave();
+    //}
 }

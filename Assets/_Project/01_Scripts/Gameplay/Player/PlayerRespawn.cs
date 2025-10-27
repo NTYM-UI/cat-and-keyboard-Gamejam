@@ -9,7 +9,6 @@ namespace Player.Respawn
     {
         public static PlayerRespawn playerRespawn;
         Rigidbody2D rb;
-        public int level=1;
 
         void Awake()
         {
@@ -39,7 +38,7 @@ namespace Player.Respawn
         {
             rb = GetComponent<Rigidbody2D>();
             // 初始时加载存档
-            SaveManager.instance.SaveGame(gameObject.transform.position, level);
+            SaveManager.instance.SaveGame(gameObject.transform.position);
         }
 
         public void Respawn(object data)

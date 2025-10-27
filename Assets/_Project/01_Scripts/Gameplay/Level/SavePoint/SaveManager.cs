@@ -19,16 +19,14 @@ public class SaveManager : MonoBehaviour
     }
 
     //存档
-    public void SaveGame(Vector2 playerPos,int level)
+    public void SaveGame(Vector2 playerPos)
     {
         SaveData saveData = new SaveData();
         saveData.playerPosX = playerPos.x;
         saveData.playerPosY = playerPos.y;
-        saveData.currentLevel = level;
 
         PlayerPrefs.SetFloat("PlayerPosX", saveData.playerPosX);
         PlayerPrefs.SetFloat("PlayerPosY", saveData.playerPosY);
-        PlayerPrefs.SetInt("CurrentLevel", saveData.currentLevel);
         PlayerPrefs.Save();
     }
 
@@ -39,13 +37,12 @@ public class SaveManager : MonoBehaviour
         //第二个传参是默认值（避免空存档）
         saveData.playerPosX = PlayerPrefs.GetFloat("PlayerPosX", 0f);
         saveData.playerPosY = PlayerPrefs.GetFloat("PlayerPosY", 0f);
-        saveData.currentLevel = PlayerPrefs.GetInt("CurrentLevel", 1);
         return saveData;
     }
 
     //删档（重开）
-    public void DeleteSave()
-    {
-        PlayerPrefs.DeleteAll();
-    }
+    //public void DeleteSave()
+    //{
+    //    PlayerPrefs.DeleteAll();
+    //}
 }
