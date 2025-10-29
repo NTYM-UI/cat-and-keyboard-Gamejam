@@ -3258,6 +3258,10 @@ PrefabInstance:
       propertyPath: wallCheckDistance
       value: 0.53
       objectReference: {fileID: 0}
+    - target: {fileID: 4984772808996529932, guid: ee16767a6ba90a4439f93fd67606467d, type: 3}
+      propertyPath: confusionIconPrefab
+      value: 
+      objectReference: {fileID: 4372831474723437937, guid: 026940bd39dbbb842831fe94d4d319d4, type: 3}
     - target: {fileID: 5648781652558344236, guid: ee16767a6ba90a4439f93fd67606467d, type: 3}
       propertyPath: m_LocalPosition.x
       value: -5.18

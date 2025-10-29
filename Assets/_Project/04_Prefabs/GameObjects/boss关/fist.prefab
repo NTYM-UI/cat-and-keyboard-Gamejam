@@ -272,3 +272,4 @@ MonoBehaviour:
   damage: 1
   lifetime: 0.2
   impactForce: 1
+  impactEffectPrefab: {fileID: 4392509774142413450, guid: 2dd363f26b3928e469b2d4de19ac09f0, type: 3}

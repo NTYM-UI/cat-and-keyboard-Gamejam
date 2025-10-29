@@ -193,4 +193,8 @@ MonoBehaviour:
   lifetime: 3
   explosionRadius: 2
   damage: 1
-  explosionEffect: {fileID: 2669671239653729573, guid: 91f4880e92b9f6a47941678e88d17756, type: 3}
+  explosionEffect: {fileID: 8944900286285030474, guid: 4724779362c4bb744af3e2306dd0228c, type: 3}
+  appearanceTime: 1
+  warningTime: 0.8
+  flashSpeed: 0.1
+  isAppearing: 1

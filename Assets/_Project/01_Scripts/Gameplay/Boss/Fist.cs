@@ -6,6 +6,7 @@ public class Fist : MonoBehaviour
     [SerializeField] private int damage = 1;          // 拳头造成的伤害
     [SerializeField] private float lifetime = 0.2f;      // 拳头的生命周期（秒）
     [SerializeField] private float impactForce = 1f;   // 碰撞时的冲击力
+    [SerializeField] private GameObject impactEffectPrefab; // 落地特效预制体
     
     private Rigidbody2D rb;
     
@@ -39,7 +40,8 @@ public class Fist : MonoBehaviour
         // 检测是否击中地面
         else if (other.gameObject.layer == LayerMask.NameToLayer("Ground"))
         {
-            // 可以在这里添加击中效果（如粒子效果、音效等）
+            // 播放落地特效
+            PlayImpactEffect();
             
             // 触发屏幕震动
             CameraShakeHelper.TriggerCameraShake();
@@ -56,9 +58,26 @@ public class Fist : MonoBehaviour
         }
     }
     
-    // 如果需要的话，可以添加击中效果的方法
+    // 播放击中效果
     private void PlayImpactEffect()
     {
-        // 这里可以添加粒子效果、音效等
+        if (impactEffectPrefab != null)
+        {
+            // 在拳头位置实例化特效
+            GameObject effect = Instantiate(impactEffectPrefab, transform.position, Quaternion.identity);
+            
+            // 获取粒子系统组件
+            ParticleSystem ps = effect.GetComponent<ParticleSystem>();
+            if (ps != null)
+            {
+                // 设置特效生命周期，确保特效播放完毕后自动销毁
+                Destroy(effect, ps.main.duration);
+            }
+            else
+            {
+                // 如果没有粒子系统组件，使用默认生命周期
+                Destroy(effect, 2f);
+            }
+        }
     }
 }
