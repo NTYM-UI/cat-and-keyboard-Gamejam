@@ -80,12 +80,26 @@ public class PlayerDeath : MonoBehaviour
     }
 
     /// <summary>
-    /// 延迟复活协程
+    /// 延迟后处理玩家死亡
     /// </summary>
     private IEnumerator RespawnAfterDelay()
     {
         // 可以在这里添加死亡动画时间
         yield return new WaitForSeconds(0.5f);
-        EventManager.Instance.Publish(GameEventNames.PLAYER_RESPAWN);
+        
+        // 检查当前场景是否为LevelScenes4_1 - 使用兼容的方法获取场景名称
+        string currentSceneName = Application.loadedLevelName;
+        if (currentSceneName == "LevelScenes4_1")
+        {
+            // 重新加载当前场景 - 使用兼容的方法加载场景
+            Debug.Log("玩家死亡，重新加载LevelScenes4_1场景");
+            Application.LoadLevel(currentSceneName);
+        }
+        else
+        {
+            // 其他场景保持原有的复活事件发布逻辑
+            Debug.Log("玩家死亡，发布复活事件");
+            EventManager.Instance.Publish(GameEventNames.PLAYER_RESPAWN);
+        }
     }
 }

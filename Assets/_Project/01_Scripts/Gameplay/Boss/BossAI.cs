@@ -4,6 +4,10 @@ using System.Collections.Generic;
 
 public class BossAI : MonoBehaviour
 {
+    // 虚弱状态事件定义
+    public static event System.Action OnBossEnterWeakState;
+    public static event System.Action OnBossExitWeakState;
+    
     [Header("基础设置")]
     [SerializeField] private float floatSpeed = 0.5f;           // 飘动速度
     [SerializeField] private float floatAmplitude = 0.5f;      // 飘动幅度 
@@ -24,7 +28,7 @@ public class BossAI : MonoBehaviour
     
     [Header("拳头下落技能设置")]
     [SerializeField] private GameObject fistPrefab;            // 拳头预制体
-    [SerializeField] private float fistDropSpeed = 10f;        // 拳头下落速度
+    [SerializeField] private float fistDropSpeed = 15f;        // 拳头下落速度
     [SerializeField] private float fistSpawnInterval = 0.3f;   // 拳头生成间隔
     [SerializeField] private int fistDropCount = 5;            // 每次技能生成的拳头数量
     [SerializeField] private float fistSpawnHeight = 15f;      // 拳头生成高度
@@ -37,6 +41,8 @@ public class BossAI : MonoBehaviour
     [SerializeField] private Transform bombSpawnPoint;         // 炸弹生成点
     [SerializeField] private Transform targetPlayer;           // 目标玩家
     [SerializeField] private Animator bossAnimator;            // Boss动画器
+    [SerializeField] private Rigidbody2D bossRigidbody;        // Boss刚体组件
+    [SerializeField] private float fallSpeed = 10f;            // 掉落速度
 
     // 动画参数名
     private const string PARAM_OPEN_CLOAK = "OpenCloak";      // 张开斗篷参数
@@ -67,8 +73,7 @@ public class BossAI : MonoBehaviour
     private const float MAX_Y_POSITION = 5.31f; // Y轴最大位置限制
     private const float MIN_X_POSITION = -10.35f; // X轴最小位置限制
     private const float MAX_X_POSITION = 11.9f;  // X轴最大位置限制
-
-    public AIState currentState = AIState.Floating;           // 当前状态
+    private AIState currentState = AIState.Floating;           // 当前状态
     private AttackType currentAttackType;                      // 当前攻击类型
     private float lastAttackTime;                              // 上次攻击时间
     private bool isPlayerConfused = false;                     // 玩家是否处于混乱状态
@@ -78,6 +83,7 @@ public class BossAI : MonoBehaviour
     private Vector3 originalPosition;                          // 原始位置（用于飘动计算）
     private int currentPhase = 1;                              // 当前阶段，默认为第一阶段
     private List<GameObject> warningIndicators = new List<GameObject>(); // 存储所有预警提示
+    private bool isAttackEnabled = true; // 控制攻击是否启用
 
     private void Start()
     {
@@ -114,12 +120,10 @@ public class BossAI : MonoBehaviour
         if (EventManager.Instance != null)
         {
             EventManager.Instance.Subscribe(GameEventNames.HOLY_SPEAR_ATTACK, OnHolySpearAttack);
-            Debug.Log("已订阅圣枪攻击事件");
         }
         
         // 开始AI行为协程
         StartCoroutine(AICoroutine());
-        Debug.Log("已启动AICoroutine");
     }
 
     private IEnumerator AICoroutine()
@@ -157,7 +161,6 @@ public class BossAI : MonoBehaviour
         // 检查是否处于虚弱状态，如果是则不移动
         if (currentState == AIState.Weak)
         {
-            Debug.Log("Boss在虚弱状态下不执行移动");
             yield break;
         }
         
@@ -191,8 +194,8 @@ public class BossAI : MonoBehaviour
             // 检查是否可以攻击
             if (targetPlayer != null)
             {
-                // 虚弱状态下不能攻击
-                if (currentState != AIState.Weak && Time.time >= lastAttackTime + attackCooldown)
+                // 虚弱状态或攻击禁用时不能攻击
+                if (currentState != AIState.Weak && isAttackEnabled && Time.time >= lastAttackTime + attackCooldown)
                 {
                     currentState = AIState.PreparingAttack;
                     yield break;
@@ -340,7 +343,6 @@ public class BossAI : MonoBehaviour
         if (currentAttackType == AttackType.Confusion && bossAnimator != null)
         {
             bossAnimator.SetTrigger(PARAM_CLOSE_CLOAK);
-            Debug.Log("混乱技能释放完成，Boss收起斗篷");
         }
         // 拳头下落技能释放后，确保收起斗篷
         else if (currentAttackType == AttackType.FistDrop && bossAnimator != null)
@@ -358,9 +360,6 @@ public class BossAI : MonoBehaviour
     // 虚弱状态协程
     private IEnumerator WeakStateCoroutine()
     {
-        // 虚弱动画已在EnterWeakStateWithCloakSequence中触发，此处不再重复触发
-        Debug.Log("WeakStateCoroutine开始处理虚弱状态持续时间");
-
         weakStateStartTime = Time.time;
 
         // 在虚弱状态期间
@@ -370,24 +369,65 @@ public class BossAI : MonoBehaviour
             yield return null;
         }
 
+        // 触发虚弱状态结束事件
+        OnBossExitWeakState?.Invoke();
+
         // 退出虚弱状态
         if (bossAnimator != null)
-        {
+        {   
             bossAnimator.SetTrigger(PARAM_OUT_WEAK);
         }
-
+        
+        // 停止掉落协程（如果正在运行）
+        StopCoroutine(FallToGroundCoroutine());
+        
+        // 确保Rigidbody保持为Kinematic类型
+        if (bossRigidbody != null)
+        {   
+            bossRigidbody.velocity = Vector2.zero; // 清除速度
+        }
+        
         // 恢复到进入虚弱状态前的状态，而不是固定的Floating状态
         // 这样可以让Boss在虚弱状态结束后继续之前的行为模式
         if (previousState != AIState.Weak)
-        {
+        {   
             currentState = previousState;
-            Debug.Log("Boss从虚弱状态恢复，回到之前的状态: " + previousState);
         }
         else
-        {
+        {   
             currentState = AIState.Floating;
-            Debug.Log("Boss从虚弱状态恢复，进入Floating状态");
         }
+    }
+    
+    /// <summary>
+    /// 控制Boss从当前位置平滑掉落到地面的协程
+    /// </summary>
+    private IEnumerator FallToGroundCoroutine()
+    {
+        // 获取当前位置
+        Vector3 currentPosition = transform.position;
+        
+        // 计算目标位置（保持X和Z不变，Y设为地面位置）
+        Vector3 targetPosition = new Vector3(currentPosition.x, groundYPosition, currentPosition.z);
+        
+        // 计算需要移动的距离
+        float distanceToGround = Mathf.Abs(currentPosition.y - groundYPosition);
+        
+        // 计算掉落所需时间
+        float fallDuration = distanceToGround / fallSpeed;
+        float elapsedTime = 0f;
+        
+        // 平滑移动到地面
+        while (elapsedTime < fallDuration)
+        {
+            // 使用线性插值平滑移动
+            transform.position = Vector3.Lerp(currentPosition, targetPosition, elapsedTime / fallDuration);
+            elapsedTime += Time.deltaTime;
+            yield return null;
+        }
+        
+        // 确保精确地到达地面位置
+        transform.position = targetPosition;
     }
 
     // 销毁Boss创造的所有技能
@@ -400,7 +440,6 @@ public class BossAI : MonoBehaviour
         {
             Destroy(bomb.gameObject);
         }
-        Debug.Log($"销毁了{ bombCount}个炸弹");
         
         // 销毁所有拳头
         Fist[] fists = FindObjectsOfType<Fist>();
@@ -409,7 +448,6 @@ public class BossAI : MonoBehaviour
         {
             Destroy(fist.gameObject);
         }
-        Debug.Log($"销毁了{ fistCount}个拳头");
         
         // 销毁所有预警提示
         ClearWarningIndicators();
@@ -430,7 +468,6 @@ public class BossAI : MonoBehaviour
         }
         // 清空列表
         warningIndicators.Clear();
-        Debug.Log($"销毁了{ warningCount}个拳头预警提示");
     }
 
     // 旋转向量函数
@@ -449,7 +486,6 @@ public class BossAI : MonoBehaviour
 
         // 根据当前阶段决定生成炸弹的数量
         int bombCount = (currentPhase >= 2) ? 3 : 1;
-        Debug.Log($"Boss在第{currentPhase}阶段生成{bombCount}个炸弹");
 
         // 生成指定数量的炸弹
         for (int i = 0; i < bombCount; i++)
@@ -530,13 +566,13 @@ public class BossAI : MonoBehaviour
                     switch (bombIndex)
                     {
                         case 0: // 第一个炸弹：向左偏移
-                            angleOffset = -15f; // 向左偏移15度
+                            angleOffset = -30f; // 向左偏移15度
                             break;
                         case 1: // 第二个炸弹：直接朝向玩家
                             angleOffset = 0f;
                             break;
                         case 2: // 第三个炸弹：向右偏移
-                            angleOffset = 15f; // 向右偏移15度
+                            angleOffset = 30f; // 向右偏移15度
                             break;
                         default: // 默认情况：不偏移
                             angleOffset = 0f;
@@ -545,7 +581,6 @@ public class BossAI : MonoBehaviour
                     
                     // 计算旋转后的方向
                     direction = RotateVector(baseDirection, angleOffset);
-                    Debug.Log($"Boss在第{currentPhase}阶段投掷炸弹{ bombIndex + 1}，方向偏移：{ angleOffset}度");
                 }
                 else
                 {
@@ -556,11 +591,10 @@ public class BossAI : MonoBehaviour
                 // 应用初速度，让炸弹按指定方向飞去
                 bombRb.velocity = direction * bombThrowSpeed;
                 
-                // 当炸弹被投出时，播放收起斗篷动画
-                if (bossAnimator != null)
+                // 只有最后一个炸弹被投出时才收起斗篷（在多炸弹模式下）
+                if (((currentPhase >= 2 && bombIndex == 2) || currentPhase == 1) && bossAnimator != null) 
                 {
                     bossAnimator.SetTrigger(PARAM_CLOSE_CLOAK);
-                    Debug.Log("炸弹被投出，Boss收起斗篷");
                 }
             }
             
@@ -582,25 +616,37 @@ public class BossAI : MonoBehaviour
         // 保存之前的状态，以便在虚弱状态结束后恢复
         previousState = currentState;
         
-        Debug.Log("Boss被圣枪击中，中断当前动作并立即进入虚弱状态，当前状态: " + currentState);
-        
         // 停止所有正在运行的协程，确保彻底中断当前操作
         // 这很重要，特别是对于ChargeCoroutine等可能在后台运行并修改状态的协程
         StopAllCoroutines();
-        Debug.Log("已停止所有协程，确保Boss操作被完全中断");
         
         // 销毁Boss创造的所有技能（炸弹和拳头）
         DestroyAllBossSkills();
         
         // 直接设置当前状态为虚弱状态
         currentState = AIState.Weak;
-        Debug.Log("直接设置Boss状态为Weak");
+        
+        // 触发虚弱状态开始事件
+        OnBossEnterWeakState?.Invoke();
         
         // 直接触发虚弱动画
         if (bossAnimator != null)
-        {
+        {    
             bossAnimator.SetTrigger(PARAM_WEAK);
-            Debug.Log("立即触发Boss虚弱动画");
+        }
+        
+        // 作为幽灵，使用代码控制掉落而不是物理重力
+        if (bossRigidbody == null)
+        {   
+            bossRigidbody = GetComponent<Rigidbody2D>();
+        }
+        
+        // 确保Rigidbody在正常状态下不受重力影响
+        if (bossRigidbody != null)
+        {   
+            // 保持为Kinematic类型，但添加向下移动的逻辑
+            // 在Update或协程中实现掉落
+            StartCoroutine(FallToGroundCoroutine());
         }
         
         // 重置虚弱状态下的点击伤害计数器
@@ -612,38 +658,6 @@ public class BossAI : MonoBehaviour
         
         // 重新启动AICoroutine，以确保它能正确处理WeakStateCoroutine
         StartCoroutine(AICoroutine());
-        Debug.Log("重新启动AICoroutine以处理虚弱状态");
-    }
-    
-    /// <summary>
-    /// 进入虚弱状态的协程
-    /// </summary>
-    private IEnumerator EnterWeakStateWithCloakSequence()
-    {
-        Debug.Log("开始进入虚弱状态，中断了当前操作: " + previousState);
-        
-        // 直接触发虚弱动画，不再等待AICoroutine切换到WeakStateCoroutine
-        if (bossAnimator != null)
-        {
-            bossAnimator.SetTrigger(PARAM_WEAK);
-            Debug.Log("立即触发Boss虚弱动画");
-        }
-        
-        // 直接进入虚弱状态
-        currentState = AIState.Weak;
-        Debug.Log("Boss立即进入虚弱状态，AICoroutine将启动WeakStateCoroutine处理持续时间");
-        
-        // 重置虚弱状态下的点击伤害计数器
-        BossHealth bossHealth = GetComponent<BossHealth>();
-        if (bossHealth != null)
-        {
-            bossHealth.ResetWeakStateClickDamage();
-        }
-        
-        // 协程正常结束，让AICoroutine能够继续执行WeakStateCoroutine
-        yield return null;
-        
-        // 移除直接触发PARAM_WEAK动画的代码，让WeakStateCoroutine来负责动画触发和持续时间管理
     }
     
     /// <summary>
@@ -678,7 +692,6 @@ public class BossAI : MonoBehaviour
             {
                 // 发布事件切换玩家控制方向
                 EventManager.Instance.Publish(GameEventNames.PLAYER_TOGGLE_REVERSE_CONTROL, null);
-                Debug.Log("成功发布玩家控制反转事件");
             }
             else
             {
@@ -709,7 +722,6 @@ public class BossAI : MonoBehaviour
             {
                 // 发布事件恢复玩家控制方向
                 EventManager.Instance.Publish(GameEventNames.PLAYER_TOGGLE_REVERSE_CONTROL, null);
-                Debug.Log("成功发布恢复控制事件");
             }
             else
             {
@@ -780,8 +792,6 @@ public class BossAI : MonoBehaviour
     {
         if (fistPrefab == null || targetPlayer == null) yield break;
         
-        Debug.Log("开始执行拳头下落技能，将生成" + fistDropCount + "个拳头");
-        
         // 清空之前可能存在的预警提示
         ClearWarningIndicators();
         List<Vector3> spawnPositions = new List<Vector3>();
@@ -841,8 +851,6 @@ public class BossAI : MonoBehaviour
                 yield return new WaitForSeconds(fistSpawnInterval);
             }
         }
-        
-        Debug.Log("拳头下落技能执行完毕");
     }
     
     /// <summary>
@@ -970,7 +978,7 @@ public class BossAI : MonoBehaviour
                 attackCooldown = 2.5f; // 减少攻击冷却时间
                 bombAttackProbability = 0.5f; // 增加炸弹攻击概率
                 fistDropCount = 7; // 增加拳头下落数量
-                fistDropSpeed = 15f; // 增加拳头下落速度（从10提高到15）
+                fistDropSpeed = 20f; // 增加拳头下落速度（从10提高到15）
                 Debug.Log("Boss进入第二阶段：攻击速度加快，炸弹攻击增多，拳头数量增加，拳头下落速度加快，一次丢三个炸弹");
                 break;
                 
@@ -1000,17 +1008,24 @@ public class BossAI : MonoBehaviour
     /// </summary>
     public void TriggerOutWeakAnimation()
     {
-        Debug.Log("触发退出虚弱状态动画");
-        
         // 确保当前状态是虚弱状态
         if (currentState == AIState.Weak && bossAnimator != null)
         {
             // 触发OutWeak的trigger参数
             bossAnimator.SetTrigger(PARAM_OUT_WEAK);
-            Debug.Log("已设置OutWeak动画参数");
             
             // 切换状态为飘动状态
             currentState = AIState.Floating;
         }
+    }
+    
+    /// <summary>
+    /// 设置Boss攻击状态
+    /// </summary>
+    /// <param name="enabled">是否启用攻击</param>
+    public void SetAttackEnabled(bool enabled)
+    {
+        isAttackEnabled = enabled;
+        Debug.Log($"Boss攻击状态设置为: {enabled}");
     }
 }

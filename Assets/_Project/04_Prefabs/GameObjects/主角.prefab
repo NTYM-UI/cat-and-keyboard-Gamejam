@@ -196,6 +196,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 5
   isReverseControl: 0
+  confusionIconPrefab: {fileID: 4372831474723437937, guid: 026940bd39dbbb842831fe94d4d319d4, type: 3}
+  iconOffsetY: 5
   jumpForce: 20
   maxJumps: 1
   jumpCooldown: 0.2
@@ -242,7 +244,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58e1d2402fda6f04aba881a9bbbc16fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  level: 1
 --- !u!114 &3673642190305483919
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -269,3 +270,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lerpSpeed: 5
+  scaleCompleteThreshold: 0.01
+  maxScaleLimit: 10

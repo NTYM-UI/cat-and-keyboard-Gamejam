@@ -11860,11 +11860,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5648781652558344236, guid: ee16767a6ba90a4439f93fd67606467d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -17.8
+      value: -17.98
       objectReference: {fileID: 0}
     - target: {fileID: 5648781652558344236, guid: ee16767a6ba90a4439f93fd67606467d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -3
+      value: -3.29
       objectReference: {fileID: 0}
     - target: {fileID: 5648781652558344236, guid: ee16767a6ba90a4439f93fd67606467d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -12981,9 +12981,11 @@ MonoBehaviour:
   shakeMagnitude: 0.2
   addPhysicsOnBreak: 1
   explosionForce: 5
-  destroyAfter: 3
+  recoverAfter: 5
+  canRecover: 0
   targetDialogEndId: 55
   disableCollisionTrigger: 1
+  isBossLevel: 0
 --- !u!50 &1290121677
 Rigidbody2D:
   serializedVersion: 4
@@ -14554,11 +14556,11 @@ PrefabInstance:
       objectReference: {fileID: 1926943783}
     - target: {fileID: 7011161704538458626, guid: f533b626bf2af8a48b60901c23cf32cb, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -17.8
+      value: -17.98
       objectReference: {fileID: 0}
     - target: {fileID: 7011161704538458626, guid: f533b626bf2af8a48b60901c23cf32cb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.6436081
+      value: -0.93360806
       objectReference: {fileID: 0}
     - target: {fileID: 7011161704538458626, guid: f533b626bf2af8a48b60901c23cf32cb, type: 3}
       propertyPath: m_LocalPosition.z
@@ -14622,7 +14624,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7585385710804945101, guid: f533b626bf2af8a48b60901c23cf32cb, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.231843
+      value: 0.23184276
       objectReference: {fileID: 0}
     - target: {fileID: 7585385710804945101, guid: f533b626bf2af8a48b60901c23cf32cb, type: 3}
       propertyPath: m_LocalPosition.z
@@ -18529,7 +18531,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5986977066190801897, guid: 1e8eb61fa49fac94191a3eb1f7fd1f94, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -42.58
+      value: -41.9
       objectReference: {fileID: 0}
     - target: {fileID: 5986977066190801897, guid: 1e8eb61fa49fac94191a3eb1f7fd1f94, type: 3}
       propertyPath: m_LocalPosition.z

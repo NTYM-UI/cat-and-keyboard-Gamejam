@@ -38,6 +38,7 @@ public static class GameEventNames
     
     // 平台相关事件
     public const string PLATFORM_BREAK = "PlatformBreak"; // 平台断裂事件
+    public const string PLATFORM_RECOVER = "PlatformRecover"; // 平台恢复事件
     
     // 隐藏路相关事件
     public const string HIDDEN_PATH_ACTIVATED = "HiddenPathActivated"; // 隐藏路激活事件
@@ -47,6 +48,8 @@ public static class GameEventNames
     public const string BOSS_WEAPON_BUTTON_SPAWN = "BossWeaponButtonSpawn"; // 生成武器按钮事件
     public const string BOSS_WEAPON_BUTTON_PRESSED = "BossWeaponButtonPressed"; // 武器按钮被按下事件
     public const string HOLY_SPEAR_ATTACK = "HolySpearAttack"; // 圣枪攻击事件
+    public const string BOSS_PHASE_CHANGE = "BossPhaseChange"; // Boss阶段变化事件
+    public const string PLAYER_LAND = "PlayerLand"; // 玩家落地事件
 
     // 窗口缩放相关事件
     public const string WINDOW_SCALE_CHANGED = "WindowScaleChanged"; // 窗口缩放变化事件

@@ -151,7 +151,17 @@ public class PlayerController : MonoBehaviour
     {
         wasGrounded = isGrounded;
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
-        if (!wasGrounded && isGrounded) isJumping = false;
+        
+        // 检测玩家落地（从空中到地面）
+        if (!wasGrounded && isGrounded)
+        {
+            isJumping = false;
+            // 发布玩家落地事件
+            if (EventManager.Instance != null)
+            {
+                EventManager.Instance.Publish(GameEventNames.PLAYER_LAND);
+            }
+        }
     }
 
     /// <summary>更新跳跃状态 - 落地时重置跳跃次数</summary>

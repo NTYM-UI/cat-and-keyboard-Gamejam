@@ -35,12 +35,12 @@ public class BossWeaponButtonManager : MonoBehaviour
     private GameObject currentButton = null; // 当前生成的按钮
     private float battleStartTime; // 战斗开始时间
     private float lastButtonSpawnTime; // 上次按钮生成时间
+    private bool battleStarted = false; // 战斗是否已开始
 
     private void Start()
     {
-        // 记录战斗开始时间
-        battleStartTime = Time.time;
-        lastButtonSpawnTime = -buttonCooldown; // 初始设置为负冷却时间，允许第一次生成
+        // 初始设置最后生成时间为负冷却时间，允许第一次生成
+        lastButtonSpawnTime = -buttonCooldown;
 
         // 订阅按钮按下事件
         EventManager.Instance.Subscribe(GameEventNames.BOSS_WEAPON_BUTTON_PRESSED, OnButtonPressed);
@@ -54,6 +54,18 @@ public class BossWeaponButtonManager : MonoBehaviour
 
     private void Update()
     {
+        // 检查Boss是否显示并且战斗尚未开始
+        if (!battleStarted && bossTransform != null && bossTransform.gameObject.activeInHierarchy)
+        {
+            // Boss显示，战斗开始
+            battleStartTime = Time.time;
+            battleStarted = true;
+            Debug.Log("Boss显示，战斗开始，按钮生成计时器启动");
+        }
+        
+        // 只有在战斗开始后才检查生成按钮
+        if (!battleStarted) return;
+        
         // 检查是否应该生成按钮
         if (!isButtonSpawned && 
             Time.time >= battleStartTime + timeToSpawnButton && 
@@ -221,6 +233,8 @@ public class BossWeaponButtonManager : MonoBehaviour
 
         Debug.Log("圣枪攻击执行，伤害值设置为: " + spearDamage);
     }
+    
+    // 移除了OnBossBattleStart方法，改为在Update中检测Boss的显示状态
     
     /// <summary>
     /// 计算圣枪生成位置
