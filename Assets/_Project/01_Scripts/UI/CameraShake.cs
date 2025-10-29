@@ -71,24 +71,32 @@ public class CameraShake : MonoBehaviour
         
         if (Camera.main != null)
         {
-            Vector3 originalPosition = Camera.main.transform.localPosition;
             float elapsedTime = 0f;
 
             while (elapsedTime < duration)
             {
-                // 计算随机偏移量
-                float x = originalPosition.x + Random.Range(-magnitude, magnitude);
-                float y = originalPosition.y + Random.Range(-magnitude, magnitude);
+                // 计算衰减因子，使震动随时间逐渐减弱
+                float attenuation = 1 - (elapsedTime / duration);
+                float currentMagnitude = magnitude * attenuation;
                 
-                // 应用偏移量
-                Camera.main.transform.localPosition = new Vector3(x, y, originalPosition.z);
+                // 只添加震动偏移，不重置到原始位置
+                // 这样相机的跟随行为会继续工作，震动效果叠加在上面
+                float xOffset = Random.Range(-currentMagnitude, currentMagnitude);
+                float yOffset = Random.Range(-currentMagnitude, currentMagnitude);
+                
+                // 应用震动偏移到当前相机位置
+                Vector3 currentPosition = Camera.main.transform.position;
+                Camera.main.transform.position = new Vector3(
+                    currentPosition.x + xOffset,
+                    currentPosition.y + yOffset,
+                    currentPosition.z
+                );
                 
                 elapsedTime += Time.deltaTime;
                 yield return null;
             }
-
-            // 恢复相机原始位置
-            Camera.main.transform.localPosition = originalPosition;
+            
+            // 不需要恢复到原始位置，让相机继续跟随角色
         }
         
         isShaking = false;

@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 /// <summary>
 /// 玩家控制器 - 负责处理玩家的移动和跳跃逻辑
@@ -9,6 +10,11 @@ public class PlayerController : MonoBehaviour
     [Header("移动设置")]
     [SerializeField] private float moveSpeed = 5f;         // 移动速度
     [SerializeField] private bool isReverseControl = false; // 反向控制状态
+    
+    [Header("混乱图标设置")]
+    [SerializeField] private GameObject confusionIconPrefab; // 混乱图标预制体
+    private GameObject confusionIconInstance;               // 混乱图标实例
+    [SerializeField] private float iconOffsetY = 1f;        // 图标Y轴偏移量
     
     [Header("跳跃设置")]
     [SerializeField] private float jumpForce = 7f;          // 跳跃力
@@ -51,7 +57,9 @@ public class PlayerController : MonoBehaviour
     private bool isDialogActive = false; // 对话是否激活 
 
     private void Awake()
-    {
+    {    
+        // 初始化混乱图标
+        InitializeConfusionIcon();
         rb = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>();
 
@@ -279,6 +287,38 @@ public class PlayerController : MonoBehaviour
     {
         isReverseControl = !isReverseControl;
         Debug.Log("玩家控制模式切换为：" + (isReverseControl ? "反向" : "正常"));
+        
+        // 更新混乱图标显示状态
+        UpdateConfusionIcon();
+    }
+    
+    /// <summary>初始化混乱图标</summary>
+    private void InitializeConfusionIcon()
+    {
+        // 如果有混乱图标预制体，创建实例
+        if (confusionIconPrefab != null)
+        {
+            confusionIconInstance = Instantiate(confusionIconPrefab, transform);
+            confusionIconInstance.name = "ConfusionIcon";
+            
+            // 设置初始位置（在角色头顶上方）
+            confusionIconInstance.transform.localPosition = new Vector3(0f, iconOffsetY, 0f);
+            
+            // 初始时隐藏图标
+            confusionIconInstance.SetActive(false);
+        }
+    }
+    
+    /// <summary>更新混乱图标显示状态</summary>
+    private void UpdateConfusionIcon()
+    {
+        if (confusionIconInstance != null)
+        {
+            confusionIconInstance.SetActive(isReverseControl);
+            
+            // 确保图标在角色头顶
+            confusionIconInstance.transform.localPosition = new Vector3(0f, iconOffsetY, 0f);
+        }
     }
 
     // 公共API方法

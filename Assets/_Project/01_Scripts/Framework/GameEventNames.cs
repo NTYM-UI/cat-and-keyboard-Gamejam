@@ -29,6 +29,8 @@ public static class GameEventNames
     public const string DIALOG_TYPE_SOUND = "DialogTypeSound"; // 打字音效事件
     
     // UI相关事件
+    public const string HEALTH_CHANGED = "HealthChanged"; // 生命值变化事件
+    public const string HEALTH_UI_INIT = "HealthUIInit"; // 生命值UI初始化事件
 
     // 相机相关事件
     public const string CAMERA_SHAKE = "CameraShake"; // 相机震动事件
@@ -39,6 +41,12 @@ public static class GameEventNames
     
     // 隐藏路相关事件
     public const string HIDDEN_PATH_ACTIVATED = "HiddenPathActivated"; // 隐藏路激活事件
+
+    // Boss相关事件
+    public const string BOSS_DEFEATED = "BossDefeated"; // Boss被击败事件
+    public const string BOSS_WEAPON_BUTTON_SPAWN = "BossWeaponButtonSpawn"; // 生成武器按钮事件
+    public const string BOSS_WEAPON_BUTTON_PRESSED = "BossWeaponButtonPressed"; // 武器按钮被按下事件
+    public const string HOLY_SPEAR_ATTACK = "HolySpearAttack"; // 圣枪攻击事件
 
     // 窗口缩放相关事件
     public const string WINDOW_SCALE_CHANGED = "WindowScaleChanged"; // 窗口缩放变化事件
