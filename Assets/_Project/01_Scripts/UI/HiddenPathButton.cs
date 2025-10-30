@@ -107,12 +107,6 @@ public class HiddenPathButton : MonoBehaviour
                 // 显示按钮按下效果
                 PressButton();
 
-                // 播放音效
-                EventManager.Instance.Publish(GameEventNames.PLAY_BOMB_SOUND);
-
-                // 发布按钮按下事件
-                EventManager.Instance.Publish(GameEventNames.BOSS_WEAPON_BUTTON_PRESSED);
-
                 // 首次激活或非一次性触发时显示隐藏路
                 if (!isActivated || !triggerOnce)
                 {
@@ -151,7 +145,13 @@ public class HiddenPathButton : MonoBehaviour
         
         isPressed = true;
         transform.position = originalPosition - new Vector3(0, buttonPressDistance, 0);
-        
+
+        // 播放音效
+        EventManager.Instance.Publish(GameEventNames.PLAY_BUTTON_SOUND);
+
+        // 发布按钮按下事件
+        EventManager.Instance.Publish(GameEventNames.BOSS_WEAPON_BUTTON_PRESSED);
+
         // 触发动画
         if (animator != null && useActivationAnimation)
         {

@@ -64,7 +64,9 @@ public class PlayerDeath : MonoBehaviour
             {
                 // 如果没有PlayerHealth组件，保留原有逻辑作为备用
                 Debug.LogWarning("使用备用死亡处理逻辑");
-                EventManager.Instance.Publish(GameEventNames.PLAYER_DEATH);
+                // 发布玩家死亡音效事件
+                EventManager.Instance.Publish(GameEventNames.PLAY_PLAYER_DEATH_SOUND);
+                // 发布玩家复活事件
                 EventManager.Instance.Publish(GameEventNames.PLAYER_RESPAWN);
             }
         }

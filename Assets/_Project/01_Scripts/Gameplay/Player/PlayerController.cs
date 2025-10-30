@@ -168,10 +168,16 @@ public class PlayerController : MonoBehaviour
     /// <summary>更新跳跃状态 - 落地时重置跳跃次数</summary>
     private void UpdateJumpState()
     {
-        // 只有在玩家从空中落到地面时才重置跳跃次数，避免快速按键导致的多次跳跃
-        if (!wasGrounded && isGrounded)
+        // 当玩家在地面上时，重置跳跃状态
+        if (isGrounded)
         {
-            currentJumps = 0;
+            // 只有在从空中落到地面时才重置跳跃次数
+            if (!wasGrounded)
+            {
+                currentJumps = 0;
+                isJumping = false;
+            }
+            // 即使在地面上，也要确保跳跃状态正确
             isJumping = false;
         }
     }
@@ -180,8 +186,10 @@ public class PlayerController : MonoBehaviour
     private bool CanJump()
     {
         if (currentJumps < 0) currentJumps = 0;
-        // 修改条件：允许在isGrounded为true时跳跃，即使isJumping为true，确保可以正常起跳
-        return Time.time >= lastJumpTime + jumpCooldown && currentJumps < maxJumps;
+        
+        // 确保在地面上时总是可以跳跃，或者在空中但有剩余跳跃次数
+        return Time.time >= lastJumpTime + jumpCooldown && 
+               (isGrounded || currentJumps < maxJumps);
     }
 
     /// <summary>执行跳跃动作</summary>
@@ -192,8 +200,20 @@ public class PlayerController : MonoBehaviour
         
         isJumping = true;
         lastJumpTime = Time.time;
-        currentJumps++;
         
+        // 根据是否在地面上处理跳跃计数
+        if (isGrounded)
+        {
+            // 在地面上跳跃时，重置为1（表示已使用一次跳跃）
+            currentJumps = 1;
+        }
+        else
+        {
+            // 在空中跳跃时，增加计数
+            currentJumps++;
+        }
+        
+        // 执行跳跃物理效果
         rb.velocity = new Vector2(rb.velocity.x, 0f);
         rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
     }

@@ -24,7 +24,7 @@ public class BossAI : MonoBehaviour
     [SerializeField] [Range(0f, 1f)] private float fistDropAttackProbability = 0.3f; // 拳头下落技能触发概率（0-1之间）
     [SerializeField] [Range(0f, 1f)] private float bombAttackProbability = 0.4f; // 炸弹技能触发概率（0-1之间）
     [SerializeField] private int damagePerClick = 1; // 每次点击造成的伤害
-    [SerializeField] private SpriteRenderer spriteRenderer; // 精灵渲染器引用
+    [SerializeField] private SpriteRenderer spriteRenderer; // 精灵渲染器引用，用于颜色控制
     
     [Header("拳头下落技能设置")]
     [SerializeField] private GameObject fistPrefab;            // 拳头预制体
@@ -43,6 +43,7 @@ public class BossAI : MonoBehaviour
     [SerializeField] private Animator bossAnimator;            // Boss动画器
     [SerializeField] private Rigidbody2D bossRigidbody;        // Boss刚体组件
     [SerializeField] private float fallSpeed = 10f;            // 掉落速度
+    [SerializeField] private int bombCount = 1;                // 炸弹数量
 
     // 动画参数名
     private const string PARAM_OPEN_CLOAK = "OpenCloak";      // 张开斗篷参数
@@ -240,6 +241,13 @@ public class BossAI : MonoBehaviour
         float targetY = Mathf.Min(targetPlayer.position.y + teleportHeight, MAX_Y_POSITION);
         float targetX = Mathf.Clamp(targetPlayer.position.x, MIN_X_POSITION, MAX_X_POSITION);
         Vector3 teleportPosition = new Vector3(targetX, targetY, transform.position.z);
+        
+        // 发布BOSS瞬移音效事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.Publish(GameEventNames.PLAY_BOSS_TELEPORT_SOUND, null);
+        }
+        
         transform.position = teleportPosition;
 
         // 确保teleport后不会旋转
@@ -318,6 +326,12 @@ public class BossAI : MonoBehaviour
     // 蓄力协程
     private IEnumerator ChargeCoroutine()
     {
+        // 发布BOSS蓄力/施法音效事件
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.Publish(GameEventNames.PLAY_BOSS_CAST_SOUND, null);
+        }
+        
         // 等待蓄力时间 - 炸弹已经在准备攻击阶段生成
         float elapsedTime = 0f;
 
@@ -376,6 +390,13 @@ public class BossAI : MonoBehaviour
         if (bossAnimator != null)
         {   
             bossAnimator.SetTrigger(PARAM_OUT_WEAK);
+            
+            // 虚弱状态结束，恢复为白色
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.color = Color.white;
+                Debug.Log("虚弱状态协程结束，BOSS颜色恢复为白色");
+            }
         }
         
         // 停止掉落协程（如果正在运行）
@@ -484,14 +505,14 @@ public class BossAI : MonoBehaviour
     {
         if (bombPrefab == null || bombSpawnPoint == null || targetPlayer == null) return;
 
-        // 根据当前阶段决定生成炸弹的数量
-        int bombCount = (currentPhase >= 2) ? 3 : 1;
-
+        // 使用类字段中定义的炸弹数量，该数量会根据阶段在EnterNewPhase方法中更新
+        int totalBombs = bombCount;
+        
         // 生成指定数量的炸弹
-        for (int i = 0; i < bombCount; i++)
+        for (int i = 0; i < totalBombs; i++)
         {
             // 为每个炸弹计算稍微不同的生成位置，避免重叠
-            float offsetX = i * 0.5f - (bombCount - 1) * 0.25f; // 居中分布
+            float offsetX = i * 0.5f - (totalBombs - 1) * 0.25f; // 居中分布
             Vector3 spawnPosition = bombSpawnPoint.position + new Vector3(offsetX, 0f, 0f);
             
             // 生成炸弹
@@ -508,12 +529,37 @@ public class BossAI : MonoBehaviour
             // 启动协程，延迟后投掷炸弹
             // 为每个炸弹添加一点延迟，避免同时投出
             float delay = i * 0.2f; // 每个炸弹之间间隔0.2秒
-            StartCoroutine(ThrowBombAfterDelayWithOffset(bomb, delay));
+            StartCoroutine(ThrowBombAfterDelayWithOffset(bomb, delay, i, totalBombs));
+        }
+        
+        // 计算所有炸弹完成投掷所需的总时间
+        // 假设每个炸弹需要的时间包括：出现动画 + 停留时间 + 炸弹之间的延迟
+        float totalThrowTime = (totalBombs - 1) * 0.2f + bombSpawnDuration + 0.5f; // 额外0.5秒缓冲
+        
+        // 启动协程，在所有炸弹都投掷完成后再收起斗篷
+        StartCoroutine(CloseCloakAfterAllBombsThrown(totalThrowTime));
+    }
+    
+    // 所有炸弹投掷完成后收起斗篷的协程
+    private IEnumerator CloseCloakAfterAllBombsThrown(float waitTime)
+    {
+        // 增加额外的等待时间，确保所有炸弹都有足够时间飞行
+        float extendedWaitTime = waitTime + 0.8f; // 额外增加0.8秒
+        Debug.Log($"炸弹攻击完成，将在{extendedWaitTime}秒后收起斗篷");
+        
+        // 等待所有炸弹完成投掷动作并飞行一段时间
+        yield return new WaitForSeconds(extendedWaitTime);
+        
+        // 收起斗篷
+        if (bossAnimator != null && currentState != AIState.Weak) // 确保不是在虚弱状态
+        {
+            bossAnimator.SetTrigger(PARAM_CLOSE_CLOAK);
+            Debug.Log("所有炸弹投掷完成并飞行一段时间后，收起斗篷");
         }
     }
     
     // 带偏移延迟的投掷炸弹协程
-    private IEnumerator ThrowBombAfterDelayWithOffset(GameObject bomb, float delayOffset)
+    private IEnumerator ThrowBombAfterDelayWithOffset(GameObject bomb, float delayOffset, int bombIndex, int totalBombs)
     {
         // 先等待偏移延迟
         if (delayOffset > 0)
@@ -522,14 +568,14 @@ public class BossAI : MonoBehaviour
         }
         
         // 确定炸弹的索引（通过计算delayOffset确定是第几个炸弹）
-        int bombIndex = Mathf.FloorToInt(delayOffset / 0.2f);
+        // int bombIndex = Mathf.FloorToInt(delayOffset / 0.2f);
         
         // 然后调用投掷逻辑，并传入炸弹索引
-        yield return StartCoroutine(ThrowBombAfterDelay(bomb, bombIndex));
+        yield return StartCoroutine(ThrowBombAfterDelay(bomb, bombIndex, totalBombs));
     }
     
     // 延迟后投掷炸弹的协程，支持不同方向
-    private IEnumerator ThrowBombAfterDelay(GameObject bomb, int bombIndex = 0)
+    private IEnumerator ThrowBombAfterDelay(GameObject bomb, int bombIndex, int totalBombs)
     {
         Bomb bombScript = bomb.GetComponent<Bomb>();
         
@@ -591,11 +637,7 @@ public class BossAI : MonoBehaviour
                 // 应用初速度，让炸弹按指定方向飞去
                 bombRb.velocity = direction * bombThrowSpeed;
                 
-                // 只有最后一个炸弹被投出时才收起斗篷（在多炸弹模式下）
-                if (((currentPhase >= 2 && bombIndex == 2) || currentPhase == 1) && bossAnimator != null) 
-                {
-                    bossAnimator.SetTrigger(PARAM_CLOSE_CLOAK);
-                }
+                // 现在不再在单个炸弹投掷时收起斗篷，而是在所有炸弹都投掷完成后通过CloseCloakAfterAllBombsThrown协程收起
             }
             
             // 通知炸弹开始计算爆炸时间
@@ -753,6 +795,9 @@ public class BossAI : MonoBehaviour
                 
                 // 添加明显的闪白效果
                 StartCoroutine(FlashWhiteEffect());
+
+                // 播放BOSS受击音效
+                EventManager.Instance.Publish(GameEventNames.PLAY_BOSS_HIT_SOUND);
             }
         }
         else
@@ -828,8 +873,12 @@ public class BossAI : MonoBehaviour
         // 第一阶段：生成所有预警提示
         for (int i = 0; i < fistDropCount; i++)
         {
-            // 在X轴范围内随机生成位置，扩大范围以增加覆盖区域
+            // 根据当前阶段调整下落范围
             float randomOffset = Random.Range(-6f, 6f);
+            if (currentPhase >= 2)
+            {
+                randomOffset = Random.Range(-8f, 8f); // 第二和第三阶段扩大范围
+            }
             float spawnX = Mathf.Clamp(targetPlayer.position.x + randomOffset, MIN_X_POSITION, MAX_X_POSITION);
             
             // 设置地面上的预警提示位置
@@ -850,8 +899,13 @@ public class BossAI : MonoBehaviour
             }
         }
         
-        // 等待所有预警提示显示一段时间
-        yield return new WaitForSeconds(warningDuration);
+        // 等待所有预警提示显示一段时间，第二阶段预警时间更短
+        float actualWarningDuration = warningDuration;
+        if (currentPhase == 2)
+        {
+            actualWarningDuration = warningDuration * 0.7f; // 第二阶段预警时间缩短30%
+        }
+        yield return new WaitForSeconds(actualWarningDuration);
         
         // 第二阶段：生成所有拳头并销毁预警提示
         for (int i = 0; i < fistDropCount; i++)
@@ -1006,9 +1060,10 @@ public class BossAI : MonoBehaviour
                 // 第二阶段：增加攻击频率，增强技能效果
                 attackCooldown = 2.5f; // 减少攻击冷却时间
                 bombAttackProbability = 0.5f; // 增加炸弹攻击概率
+                bombCount = 2; // 设置炸弹数量为2个
                 fistDropCount = 7; // 增加拳头下落数量
-                fistDropSpeed = 20f; // 增加拳头下落速度（从10提高到15）
-                Debug.Log("Boss进入第二阶段：攻击速度加快，炸弹攻击增多，拳头数量增加，拳头下落速度加快，一次丢三个炸弹");
+                fistDropSpeed = 20f; // 增加拳头下落速度
+                Debug.Log("Boss进入第二阶段：攻击速度加快，炸弹攻击增多(2个)，拳头数量增加，拳头下落范围扩大，预警时间缩短");
                 break;
                 
             case 3:
@@ -1017,9 +1072,11 @@ public class BossAI : MonoBehaviour
                 confusionAttackProbability = 0.4f; // 增加混乱攻击概率
                 fistDropAttackProbability = 0.4f; // 增加拳头下落概率
                 bombAttackProbability = 0.2f; // 减少炸弹攻击概率
-                floatSpeed = 0.8f; // 增加飘动速度
+                bombCount = 3; // 设置炸弹数量为3个
+                fistDropSpeed = 25f; // 第三阶段拳头下落速度更快
+                floatSpeed = 1f; // 增加飘动速度
                 weakStateDuration = 4f; // 减少虚弱状态持续时间
-                Debug.Log("Boss进入第三阶段：攻击速度更快，混乱和拳头攻击增多，移动速度增加，虚弱时间缩短");
+                Debug.Log("Boss进入第三阶段：攻击速度更快，混乱和拳头攻击增多，炸弹数量增加(3个)，拳头下落速度更快，移动速度增加，虚弱时间缩短");
                 break;
         }
         
@@ -1042,6 +1099,13 @@ public class BossAI : MonoBehaviour
         {
             // 触发OutWeak的trigger参数
             bossAnimator.SetTrigger(PARAM_OUT_WEAK);
+            
+            // 虚弱状态结束，恢复为白色
+            if (spriteRenderer != null)
+            {
+                spriteRenderer.color = Color.white;
+                Debug.Log("虚弱状态结束，BOSS颜色恢复为白色");
+            }
             
             // 切换状态为飘动状态
             currentState = AIState.Floating;

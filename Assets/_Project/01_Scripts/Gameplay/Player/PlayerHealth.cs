@@ -64,15 +64,23 @@ public class PlayerHealth : MonoBehaviour
         // 发布生命值变化事件
         EventManager.Instance.Publish(GameEventNames.HEALTH_CHANGED, currentHealth);
 
+        // 发布玩家受伤音效事件
+        EventManager.Instance.Publish(GameEventNames.PLAY_PLAYER_DEATH_SOUND);
+
         // 只有在生命值大于0时才启动无敌状态
         if (currentHealth > 0)
         {
             StartCoroutine(StartInvincibility());
         }
-        // 如果生命值为0，发布死亡事件
+        // 如果生命值为0，发布死亡事件和死亡音效事件
         else
-        {
+        {            
+            // 发布玩家死亡音效事件
+            EventManager.Instance.Publish(GameEventNames.PLAY_PLAYER_DEATH_SOUND);
+            // 发布玩家死亡事件
             EventManager.Instance.Publish(GameEventNames.PLAYER_DEATH);
+            // 死亡关闭boss战音乐
+            EventManager.Instance.Publish(GameEventNames.BOSS_DEFEATED);
         }
     }
 

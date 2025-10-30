@@ -187,6 +187,8 @@ public class BossController : MonoBehaviour
         if (EventManager.Instance != null)
         {
             EventManager.Instance.Publish(GameEventNames.BOSS_BATTLE_START, null);
+            // 发布BOSS现身音效事件
+            EventManager.Instance.Publish(GameEventNames.PLAY_BOSS_APPEAR_SOUND, null);
         }
     }
     

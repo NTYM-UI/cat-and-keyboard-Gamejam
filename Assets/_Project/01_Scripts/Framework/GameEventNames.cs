@@ -57,9 +57,19 @@ public static class GameEventNames
     
     // 音频相关事件
     public const string PLAY_MAIN_BGM = "PlayMainBGM"; // 播放主背景音乐事件
+    public const string PLAY_MAIN_BGM_STOP = "PlayMainBGMStop"; // 播放BOSS背景音乐事件
     public const string BOSS_BATTLE_START = "BossBattleStart"; // BOSS战开始播放boss音乐事件
-    public const string PLAY_FIST_SOUND = "PlayFistSound"; // 播放拳头音效事件
-    public const string PLAY_BOMB_SOUND = "PlayBombSound"; // 播放炸弹音效事件
     public const string PLAY_BUTTON_SOUND = "PlayButtonSound"; // 播放按钮音效事件
     public const string PLAY_GROUND_CRACKED_SOUND = "PlayGroundCrackedSound"; // 播放地面破裂音效事件
+    public const string PLAY_PLAYER_DEATH_SOUND = "PlayPlayerDeathSound"; // 播放玩家死亡音效事件
+    
+    // BOSS音效相关事件
+    public const string PLAY_BOSS_HIT_SOUND = "PlayBossHitSound"; // 播放BOSS受击音效事件
+    public const string PLAY_BOSS_CAPE_OPEN_SOUND = "PlayBossCapeOpenSound"; // 播放BOSS张开斗篷音效事件
+    public const string PLAY_BOSS_CAST_SOUND = "PlayBossCastSound"; // 播放BOSS施法音效事件
+    public const string PLAY_BOSS_APPEAR_SOUND = "PlayBossAppearSound"; // 播放BOSS现身音效事件
+    public const string PLAY_BOSS_TELEPORT_SOUND = "PlayBossTeleportSound"; // 播放BOSS瞬移音效事件
+    public const string PLAY_BOSS_CHARGE_SOUND = "PlayBossChargeSound"; // 播放BOSS蓄力音效事件
+    public const string PLAY_FIST_SOUND = "PlayFistSound"; // 播放拳头音效事件
+    public const string PLAY_BOMB_SOUND = "PlayBombSound"; // 播放炸弹音效事件
 }

@@ -165,7 +165,7 @@ public class BossHealth : MonoBehaviour
     
     // 进入指定阶段
     private void EnterPhase(int phaseNumber)
-    {
+    {        
         currentPhase = phaseNumber;
         Debug.Log($"Boss进入第{currentPhase}阶段!");
         
@@ -174,10 +174,13 @@ public class BossHealth : MonoBehaviour
         
         // 播放阶段切换特效
         PlayPhaseTransitionEffect();
-        
+
+        // 播放阶段切换音效
+        EventManager.Instance.Publish(GameEventNames.PLAY_BOSS_APPEAR_SOUND);
+
         // 通知AI进入新阶段
         if (bossAI != null)
-        {
+        {            
             bossAI.EnterNewPhase(currentPhase);
         }
         
@@ -186,6 +189,14 @@ public class BossHealth : MonoBehaviour
         
         // 发布Boss阶段变化事件
         EventManager.Instance.Publish(GameEventNames.BOSS_PHASE_CHANGE, currentPhase);
+        
+        // BOSS进入新阶段时，玩家恢复1点生命值
+        PlayerHealth[] playerHealths = FindObjectsOfType<PlayerHealth>();
+        foreach (PlayerHealth playerHealth in playerHealths)
+        {            
+            playerHealth.Heal(1);
+            Debug.Log("BOSS进入新阶段，玩家恢复1点生命值");
+        }
     }
     
     /// <summary>
@@ -300,8 +311,17 @@ public class BossHealth : MonoBehaviour
             yield return new WaitForSeconds(0.05f);
         }
         
-        // 确保最后是原始颜色
-        spriteRenderer.color = originalColor;
+        // 但是如果BOSS处于虚弱状态，应该恢复为白色
+        bool isInWeakState = (bossAI != null && bossAI.IsInWeakState());
+        if (isInWeakState)
+        {
+            spriteRenderer.color = Color.white;
+            Debug.Log("虚弱状态下受伤闪烁效果结束，BOSS颜色恢复为白色");
+        }
+        else
+        {
+            spriteRenderer.color = originalColor;
+        }
     }
     
     private void SubscribeToEvents()
