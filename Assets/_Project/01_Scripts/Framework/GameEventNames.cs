@@ -61,4 +61,5 @@ public static class GameEventNames
     public const string PLAY_FIST_SOUND = "PlayFistSound"; // 播放拳头音效事件
     public const string PLAY_BOMB_SOUND = "PlayBombSound"; // 播放炸弹音效事件
     public const string PLAY_BUTTON_SOUND = "PlayButtonSound"; // 播放按钮音效事件
+    public const string PLAY_GROUND_CRACKED_SOUND = "PlayGroundCrackedSound"; // 播放地面破裂音效事件
 }

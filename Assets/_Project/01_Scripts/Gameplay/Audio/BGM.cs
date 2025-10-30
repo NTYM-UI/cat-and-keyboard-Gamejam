@@ -11,6 +11,7 @@ public class BGM : MonoBehaviour
     public AudioSource fistSource;    // 拳头音效来源
     public AudioSource bombSource;    // 炸弹音效来源
     public AudioSource buttonSource;  // 按钮音效来源
+    public AudioSource groundCrackedSource;  // 地面破裂音效来源
 
     void Start()
     {
@@ -29,6 +30,8 @@ public class BGM : MonoBehaviour
         EventManager.Instance.Subscribe(GameEventNames.PLAYER_TOGGLE_REVERSE_CONTROL, PlayChaosSound); 
         EventManager.Instance.Subscribe(GameEventNames.PLAY_FIST_SOUND, PlayFistSound);
         EventManager.Instance.Subscribe(GameEventNames.PLAY_BOMB_SOUND, PlayBombSound);
+        EventManager.Instance.Subscribe(GameEventNames.PLAY_BUTTON_SOUND, PlayButtonSound);
+        EventManager.Instance.Subscribe(GameEventNames.PLAY_GROUND_CRACKED_SOUND, PlayGroundCrackedSound);
     }
 
     private void OnDisable()
@@ -41,6 +44,8 @@ public class BGM : MonoBehaviour
         EventManager.Instance.Unsubscribe(GameEventNames.PLAYER_TOGGLE_REVERSE_CONTROL, PlayChaosSound);
         EventManager.Instance.Unsubscribe(GameEventNames.PLAY_FIST_SOUND, PlayFistSound);
         EventManager.Instance.Unsubscribe(GameEventNames.PLAY_BOMB_SOUND, PlayBombSound);
+        EventManager.Instance.Unsubscribe(GameEventNames.PLAY_BUTTON_SOUND, PlayButtonSound);
+        EventManager.Instance.Unsubscribe(GameEventNames.PLAY_GROUND_CRACKED_SOUND, PlayGroundCrackedSound);
     }
 
     // 播放主背景音乐
@@ -132,10 +137,21 @@ public class BGM : MonoBehaviour
     }
 
     // 播放按钮音效 - 使用PlayOneShot支持重叠播放
-    public void PlayButtonSound()
+    public void PlayButtonSound(object data)
     {
         // 获取AudioSource组件并播放音效
         AudioSource audioSource = buttonSource;
+        if (audioSource != null && audioSource.clip != null)
+        {
+            audioSource.PlayOneShot(audioSource.clip);
+        }
+    }
+
+    // 播放地面破裂音效 - 使用PlayOneShot支持重叠播放
+    public void PlayGroundCrackedSound(object data)
+    {
+        // 获取AudioSource组件并播放音效
+        AudioSource audioSource = groundCrackedSource;
         if (audioSource != null && audioSource.clip != null)
         {
             audioSource.PlayOneShot(audioSource.clip);

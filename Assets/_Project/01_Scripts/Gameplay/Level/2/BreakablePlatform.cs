@@ -144,7 +144,10 @@ public class BreakablePlatform : MonoBehaviour
         
         // 发布平台断裂事件
         EventManager.Instance.Publish(GameEventNames.PLATFORM_BREAK, gameObject);
-        
+
+        // 发布断裂音效
+        EventManager.Instance.Publish(GameEventNames.PLAY_GROUND_CRACKED_SOUND);
+
         // 移除碰撞器，让玩家掉下去
         if (platformCollider != null)
         {
