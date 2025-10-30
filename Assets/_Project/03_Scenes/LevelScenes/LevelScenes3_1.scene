@@ -10352,6 +10352,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: BGM
       objectReference: {fileID: 0}
+    - target: {fileID: 472471103665034033, guid: 0c66413404ad9be4abf6c0721e4d4fd0, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7850999831459969485, guid: 0c66413404ad9be4abf6c0721e4d4fd0, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -21222,6 +21226,10 @@ PrefabInstance:
     - target: {fileID: 3233008838477346224, guid: 8d9379db88fe7fc4bac8d0a1a9d5f6b1, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6762594473519528602, guid: 8d9379db88fe7fc4bac8d0a1a9d5f6b1, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -266
       objectReference: {fileID: 0}
     - target: {fileID: 7209580074261257381, guid: 8d9379db88fe7fc4bac8d0a1a9d5f6b1, type: 3}
       propertyPath: m_AnchoredPosition.x
