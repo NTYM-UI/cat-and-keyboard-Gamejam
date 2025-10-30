@@ -20,6 +20,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/_Project/03_Scenes/LevelScenes/LevelScenes4_1.scene
     guid: 6763574f55a447041b35a5c149f4e0ec
+  - enabled: 1
+    path: Assets/_Project/03_Scenes/EndScene.scene
+    guid: 9fae6f440d23af14e8a9dbc67b30332e
   m_BuildProfiles: []
   m_configObjects: {}
   m_SlimFeaturesWeixinMiniGame:

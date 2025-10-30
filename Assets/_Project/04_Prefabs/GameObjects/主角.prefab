@@ -202,6 +202,7 @@ MonoBehaviour:
   maxJumps: 1
   jumpCooldown: 0.2
   gravityScale: 5
+  maxFallSpeed: -20
   groundCheck: {fileID: 0}
   groundCheckRadius: 0.43
   groundLayer:
@@ -269,6 +270,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c63f272d4addd13488184b9d07364a2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lerpSpeed: 5
+  lerpSpeed: 20
   scaleCompleteThreshold: 0.01
   maxScaleLimit: 10

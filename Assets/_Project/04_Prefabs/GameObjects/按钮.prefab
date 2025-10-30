@@ -148,6 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 241898ab438493d43ba89d0cf51b5a5e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioSource: {fileID: 7419996111595267291, guid: 176fcfed4cba8b54dbcbd689e1aa9fe9, type: 3}
   hiddenPath: {fileID: 0}
   useActivationAnimation: 1
   buttonPressDistance: 0.2
@@ -156,7 +157,7 @@ MonoBehaviour:
   fadeInDuration: 0.5
   triggerOnce: 1
   playerArea: 0
-  buttonTargetArea: 2
+  buttonTargetArea: 1.5
   showAreaDisplay: 1
   areaDisplayText: {fileID: 0}
   triggerCameraShake: 1

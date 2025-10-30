@@ -18,11 +18,12 @@ public class PlayerController : MonoBehaviour
     
     [Header("跳跃设置")]
     [SerializeField] private float jumpForce = 7f;          // 跳跃力
-    [SerializeField] private int maxJumps = 2;              // 最大跳跃次数
+    [SerializeField] private int maxJumps = 1;              // 最大跳跃次数（1表示只能在地面跳一次）
     [SerializeField] private float jumpCooldown = 0.2f;     // 跳跃冷却时间
     
     [Header("物理设置")]
     [SerializeField] private float gravityScale = 2f;       // 重力比例
+    [SerializeField] private float maxFallSpeed = -10f;      // 最大下落速度（负值表示向下）
     
     [Header("地面检测")]
     [SerializeField] private Transform groundCheck;         // 地面检测点
@@ -167,24 +168,31 @@ public class PlayerController : MonoBehaviour
     /// <summary>更新跳跃状态 - 落地时重置跳跃次数</summary>
     private void UpdateJumpState()
     {
-        if (isGrounded && !isJumping) currentJumps = 0;
+        // 只有在玩家从空中落到地面时才重置跳跃次数，避免快速按键导致的多次跳跃
+        if (!wasGrounded && isGrounded)
+        {
+            currentJumps = 0;
+            isJumping = false;
+        }
     }
 
     /// <summary>检查是否可以跳跃</summary>
     private bool CanJump()
     {
         if (currentJumps < 0) currentJumps = 0;
-        return isGrounded && Time.time >= lastJumpTime + jumpCooldown && currentJumps < maxJumps;
+        // 修改条件：允许在isGrounded为true时跳跃，即使isJumping为true，确保可以正常起跳
+        return Time.time >= lastJumpTime + jumpCooldown && currentJumps < maxJumps;
     }
 
     /// <summary>执行跳跃动作</summary>
     private void Jump()
     {
+        // 只有满足跳跃条件时才允许跳跃
         if (!CanJump()) return;
         
         isJumping = true;
         lastJumpTime = Time.time;
-        currentJumps = Mathf.Min(currentJumps + 1, maxJumps);
+        currentJumps++;
         
         rb.velocity = new Vector2(rb.velocity.x, 0f);
         rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
@@ -205,7 +213,14 @@ public class PlayerController : MonoBehaviour
         if (isTouchingWall && Mathf.Sign(moveDirection) == wallDirection)
             targetHorizontalSpeed = 0f;
         
-        rb.velocity = new Vector2(targetHorizontalSpeed, rb.velocity.y);
+        // 限制最大下落速度，避免摄像机跟不上
+        float clampedYVelocity = rb.velocity.y;
+        if (rb.velocity.y < maxFallSpeed)
+        {
+            clampedYVelocity = maxFallSpeed;
+        }
+        
+        rb.velocity = new Vector2(targetHorizontalSpeed, clampedYVelocity);
     }
     
     /// <summary>处理对话开始事件</summary>

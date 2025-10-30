@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Bomb : MonoBehaviour
 {
@@ -99,6 +100,7 @@ public class Bomb : MonoBehaviour
         if (spawnTime < float.MaxValue && Time.time >= spawnTime + lifetime && !hasExploded)
         {
             Explode(true); // 传递true表示有特效和伤害
+            EventManager.Instance.Publish(GameEventNames.PLAY_BOMB_SOUND);
         }
         
         // 检查是否需要开始预警
@@ -229,5 +231,17 @@ public class Bomb : MonoBehaviour
     {
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, explosionRadius);
+    }
+    
+    // 当炸弹与其他碰撞体发生碰撞时触发
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        // 检查是否与玩家发生碰撞
+        if (collision.gameObject.CompareTag("Player") && !hasExploded && !isAppearing)
+        {
+            // 直接爆炸并造成伤害和特效
+            Explode(true);
+            EventManager.Instance.Publish(GameEventNames.PLAY_BOMB_SOUND);
+        }
     }
 }

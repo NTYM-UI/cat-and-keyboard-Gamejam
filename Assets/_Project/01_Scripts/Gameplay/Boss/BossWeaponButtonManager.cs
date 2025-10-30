@@ -36,6 +36,7 @@ public class BossWeaponButtonManager : MonoBehaviour
     private float battleStartTime; // 战斗开始时间
     private float lastButtonSpawnTime; // 上次按钮生成时间
     private bool battleStarted = false; // 战斗是否已开始
+    [SerializeField] private float minDistanceFromPlayer = 4f; // 按钮与玩家的最小距离
 
     private void Start()
     {
@@ -44,12 +45,15 @@ public class BossWeaponButtonManager : MonoBehaviour
 
         // 订阅按钮按下事件
         EventManager.Instance.Subscribe(GameEventNames.BOSS_WEAPON_BUTTON_PRESSED, OnButtonPressed);
+        // 订阅游戏结束事件
+        EventManager.Instance.Subscribe(GameEventNames.BOSS_DEFEATED, OnGameEnd);
     }
 
     private void OnDestroy()
     {
         // 取消订阅事件
         EventManager.Instance.Unsubscribe(GameEventNames.BOSS_WEAPON_BUTTON_PRESSED, OnButtonPressed);
+        EventManager.Instance.Unsubscribe(GameEventNames.BOSS_DEFEATED, OnGameEnd);
     }
 
     private void Update()
@@ -106,20 +110,16 @@ public class BossWeaponButtonManager : MonoBehaviour
         Vector3 position;
         int attempts = 0;
         
-        // 确定基准位置
+        // 确定基准位置 - 不再使用玩家位置作为基准，避免按钮总是出现在玩家脚下
         Vector3 basePosition;
         if (buttonSpawnPosition != Vector3.zero)
         {
             basePosition = buttonSpawnPosition;
         }
-        else if (playerTransform != null)
-        {
-            basePosition = playerTransform.position;
-        }
         else
         {
-            // 如果都没有，则使用默认位置
-            basePosition = new Vector3(0f, groundOffset, 0f);
+            // 如果没有指定固定位置，则使用地图中间位置作为基准
+            basePosition = new Vector3((mapMinX + mapMaxX) / 2f, groundOffset, 0f);
         }
         
         do
@@ -147,12 +147,12 @@ public class BossWeaponButtonManager : MonoBehaviour
                 position.y = groundOffset;
             }
             
-            // 如果尝试次数过多，就不再检查Boss位置
+            // 如果尝试次数过多，就不再检查位置限制
             if (attempts > 20) break;
             
-            // 检查是否太靠近Boss
-        } while (bossTransform != null && 
-                Vector3.Distance(position, bossTransform.position) < 3f);
+            // 检查是否太靠近Boss或太靠近玩家
+        } while ((bossTransform != null && Vector3.Distance(position, bossTransform.position) < 3f) || 
+                (playerTransform != null && Vector3.Distance(position, playerTransform.position) < minDistanceFromPlayer));
         
         // 确保最终位置在有效范围内
         if (useMapBounds)
@@ -235,6 +235,21 @@ public class BossWeaponButtonManager : MonoBehaviour
     }
     
     // 移除了OnBossBattleStart方法，改为在Update中检测Boss的显示状态
+    
+    /// <summary>
+    /// 处理游戏结束事件
+    /// </summary>
+    private void OnGameEnd(object data)
+    {
+        // 移除当前按钮
+        if (currentButton != null)
+        {
+            Destroy(currentButton);
+            currentButton = null;
+        }
+        
+        Debug.Log("游戏结束，停止生成武器按钮");
+    }
     
     /// <summary>
     /// 计算圣枪生成位置

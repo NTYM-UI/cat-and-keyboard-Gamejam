@@ -750,12 +750,41 @@ public class BossAI : MonoBehaviour
             {
                 bossHealth.TakeDamage(damagePerClick);
                 Debug.Log("虚弱状态下点击Boss，造成伤害: " + damagePerClick);
+                
+                // 添加明显的闪白效果
+                StartCoroutine(FlashWhiteEffect());
             }
         }
         else
         {
             Debug.Log("Boss不在虚弱状态，点击无效");
         }
+    }
+    
+    /// <summary>
+    /// 闪白效果协程 - 当虚弱状态下被点击时触发
+    /// </summary>
+    private IEnumerator FlashWhiteEffect()
+    {
+        if (spriteRenderer == null)
+        {
+            spriteRenderer = GetComponent<SpriteRenderer>();
+            if (spriteRenderer == null) yield break;
+        }
+        
+        // 保存原始颜色
+        Color originalColor = spriteRenderer.color;
+        
+        // 闪红效果 - 快速变为红色再恢复
+        spriteRenderer.color = Color.red;
+        yield return new WaitForSeconds(0.05f); // 短暂显示红色
+        spriteRenderer.color = originalColor;
+        
+        // 可以添加额外的轻微闪烁以增强效果
+        yield return new WaitForSeconds(0.05f);
+        spriteRenderer.color = Color.red;
+        yield return new WaitForSeconds(0.03f);
+        spriteRenderer.color = originalColor;
     }
     
     private void OnDestroy()

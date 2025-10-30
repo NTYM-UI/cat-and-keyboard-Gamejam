@@ -3,6 +3,8 @@ using UnityEngine.UI;
 
 public class StartButtonFall : MonoBehaviour
 {
+    public AudioSource audioSource;
+
     private Rigidbody2D rb;
     private bool hasShaken = false; // 用于记录是否已经震动过，避免重复震动
     private bool isInDialog = false; // 标记对话是否正在进行
@@ -45,6 +47,11 @@ public class StartButtonFall : MonoBehaviour
         {
             // 同时解除X轴和Y轴的冻结
             rb.constraints &= ~RigidbodyConstraints2D.FreezePosition;
+        }
+        // 播放点击音效
+        if (audioSource != null)
+        {
+            audioSource.Play();
         }
     }
 

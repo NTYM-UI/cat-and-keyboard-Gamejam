@@ -7,6 +7,8 @@ using System.Collections.Generic;
 /// </summary>
 public class InteractiveButton : MonoBehaviour, IPointerDownHandler
 {
+    public AudioSource audioSource;
+
     private RectTransform btnRect;
     private RectTransform canvasRect;
     public float escapeSpeed = 500f;
@@ -84,7 +86,11 @@ public class InteractiveButton : MonoBehaviour, IPointerDownHandler
         if (isButtonHidden || isInDialog)
             return;
 
-
+        // 播放点击音效
+        if (audioSource != null)
+        {
+            audioSource.Play();
+        }
 
         // 处理点击计数和交互逻辑
         clickCount++;

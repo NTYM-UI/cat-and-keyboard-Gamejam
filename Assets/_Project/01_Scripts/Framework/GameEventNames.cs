@@ -54,4 +54,11 @@ public static class GameEventNames
     // 窗口缩放相关事件
     public const string WINDOW_SCALE_CHANGED = "WindowScaleChanged"; // 窗口缩放变化事件
     public const string SET_GAME_WINDOW_SIZE = "SetGameWindowSize"; // 设置游戏窗口大小事件
+    
+    // 音频相关事件
+    public const string PLAY_MAIN_BGM = "PlayMainBGM"; // 播放主背景音乐事件
+    public const string BOSS_BATTLE_START = "BossBattleStart"; // BOSS战开始播放boss音乐事件
+    public const string PLAY_FIST_SOUND = "PlayFistSound"; // 播放拳头音效事件
+    public const string PLAY_BOMB_SOUND = "PlayBombSound"; // 播放炸弹音效事件
+    public const string PLAY_BUTTON_SOUND = "PlayButtonSound"; // 播放按钮音效事件
 }

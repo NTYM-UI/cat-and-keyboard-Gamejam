@@ -77,6 +77,8 @@ public class BossController : MonoBehaviour
     /// </summary>
     private void ActivateBoss()
     {
+        EventManager.Instance.Publish(GameEventNames.BOSS_BATTLE_START);
+
         // 标记Boss为已激活
         isBossActivated = true;
         
@@ -179,6 +181,12 @@ public class BossController : MonoBehaviour
                     }
                 }
             }
+        }
+        
+        // Boss完全激活后，发布BOSS战开始事件，用于切换背景音乐
+        if (EventManager.Instance != null)
+        {
+            EventManager.Instance.Publish(GameEventNames.BOSS_BATTLE_START, null);
         }
     }
     

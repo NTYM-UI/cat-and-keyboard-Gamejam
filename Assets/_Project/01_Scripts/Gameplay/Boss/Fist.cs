@@ -16,7 +16,7 @@ public class Fist : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        
+
         // 实例化拖尾特效预制体
         if (trailEffectPrefab != null)
         {
@@ -41,7 +41,6 @@ public class Fist : MonoBehaviour
             // 使用SendMessage调用玩家对象上的TakeDamage方法（如果存在）
             // 这种方式不需要直接引用Health类
             other.gameObject.SendMessage("TakeDamage", damage, SendMessageOptions.DontRequireReceiver);
-            Debug.Log("拳头击中玩家，发送伤害消息: " + damage);
             
             // 尝试获取玩家的刚体组件以施加冲击力
             Rigidbody2D playerRb = other.GetComponent<Rigidbody2D>();
@@ -74,7 +73,10 @@ public class Fist : MonoBehaviour
             
             // 播放落地特效
             PlayImpactEffect();
-            
+
+            // 发布拳头落地事件
+            EventManager.Instance.Publish(GameEventNames.PLAY_FIST_SOUND);
+
             // 触发屏幕震动
             CameraShakeHelper.TriggerCameraShake();
             

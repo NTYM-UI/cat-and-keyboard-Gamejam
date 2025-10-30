@@ -302,6 +302,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4226a11a5c9bb6b46898a4accf8b5d5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  audioSource: {fileID: 8743521287566212443, guid: 21954f4d893a6d147a11b6419b1fca47, type: 3}
   damage: 1
   lifetime: 0.2
   impactForce: 1
