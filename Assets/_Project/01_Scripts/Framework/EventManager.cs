@@ -77,11 +77,6 @@ public class EventManager : Singleton<EventManager>
                 Debug.LogError("[EventManager] 发布事件时出错: " + eventName + "\n" + e.ToString());
             }
         }
-        else
-        {
-            // 可选：发布未订阅的事件时给出警告
-            // Debug.LogWarning("[EventManager] 发布了未被订阅的事件: " + eventName);
-        }
     }
 
     /// <summary>
