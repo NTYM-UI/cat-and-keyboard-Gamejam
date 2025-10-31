@@ -16,8 +16,9 @@ public class GameOpen : MonoBehaviour
         if (EventManager.Instance != null)
         {
             EventManager.Instance.Publish(GameEventNames.SET_GAME_WINDOW_SIZE, true);
+            Debug.Log("游戏打开，已尝试恢复为标准分辨率窗口模式");
         }
         // 无论EventManager是否可用，都确保执行日志记录
-        Debug.Log("游戏打开，已尝试恢复为标准分辨率窗口模式");
+        // Debug.Log("游戏打开，已尝试恢复为标准分辨率窗口模式");
     }
 }
